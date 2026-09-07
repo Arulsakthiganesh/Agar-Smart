@@ -1,0 +1,13 @@
+{
+  "name": "agarbatti-web-dashboard",
+  "version": "1.0.0",
+  "description": "Real-time Web Monitoring Dashboard for Solar Agarbatti Drying & Packaging System",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}

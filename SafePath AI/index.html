@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SafePath AI — Proactive Safety & Smart Mobility Platform</title>
+  <meta name="description" content="SafePath AI uses artificial intelligence to predict unsafe travel areas and recommend the safest route. Empowering women with predictive mobility.">
+  <meta name="theme-color" content="#0F172A">
+  <!-- Leaflet Map CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+</head>
+<body>
+
+  <!-- ==================== LANDING PAGE VIEW ==================== -->
+  <div id="landing-page-container" class="page-container active-view">
+    <!-- Navigation Header -->
+    <header class="main-header">
+      <div class="header-container">
+        <a href="#" class="logo">
+          <div class="logo-icon">
+            <i class="fa-solid fa-shield-halved"></i>
+          </div>
+          <span class="logo-text">SafePath <span class="logo-accent">AI</span></span>
+        </a>
+        <nav class="nav-links">
+          <a href="#about" class="nav-link">About</a>
+          <a href="#objectives" class="nav-link">Objectives</a>
+          <a href="#features" class="nav-link">Features</a>
+          <a href="#how-it-works" class="nav-link">How It Works</a>
+          <a href="#sdgs" class="nav-link">SDGs</a>
+          <a href="#tech-stack" class="nav-link">Tech Stack</a>
+        </nav>
+        <div class="header-actions" style="display:flex; gap:0.5rem">
+          <a href="user.html" class="btn btn-primary btn-nav">
+            User Portal <i class="fa-solid fa-location-arrow"></i>
+          </a>
+          <a href="admin.html" class="btn btn-secondary btn-nav" style="background-color:transparent; color:var(--color-primary); border:1px solid var(--color-border)">
+            Admin Panel <i class="fa-solid fa-user-shield"></i>
+          </a>
+        </div>
+        <button class="mobile-menu-toggle" aria-label="Toggle Menu">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Mobile Navigation Drawer -->
+    <div class="mobile-nav-drawer">
+      <nav class="mobile-nav-links">
+        <a href="#about" class="mobile-nav-link">About</a>
+        <a href="#objectives" class="mobile-nav-link">Objectives</a>
+        <a href="#features" class="mobile-nav-link">Features</a>
+        <a href="#how-it-works" class="mobile-nav-link">How It Works</a>
+        <a href="#sdgs" class="mobile-nav-link">SDGs</a>
+        <a href="#tech-stack" class="mobile-nav-link">Tech Stack</a>
+        <a href="user.html" class="btn btn-primary w-full mt-4">
+          User Portal <i class="fa-solid fa-location-arrow"></i>
+        </a>
+        <a href="admin.html" class="btn btn-secondary w-full mt-2" style="background-color:transparent; color:var(--color-primary); border:1px solid var(--color-border)">
+          Admin Panel <i class="fa-solid fa-user-shield"></i>
+        </a>
+      </nav>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <div class="hero-container">
+        <div class="hero-content">
+          <div class="badge-container">
+            <span class="badge badge-pulse">
+              <span class="pulse-dot"></span> Next-Gen Safety Platform
+            </span>
+          </div>
+          <h1 class="hero-title">
+            Safer Routes.<br>
+            Smarter Cities.<br>
+            <span class="highlight">Empowered Women.</span>
+          </h1>
+          <p class="hero-subtitle">
+            AI predicts unsafe areas before your journey starts and recommends the safest travel route instead of just the shortest path using real-time community intelligence.
+          </p>
+          <div class="hero-buttons" style="display:flex; flex-wrap:wrap; gap:1rem">
+            <a href="user.html" class="btn btn-primary btn-large">
+              User Safety Portal <i class="fa-solid fa-location-arrow"></i>
+            </a>
+            <a href="admin.html" class="btn btn-secondary btn-large">
+              Admin Dashboard <i class="fa-solid fa-user-shield"></i>
+            </a>
+            <button class="btn btn-text btn-large" id="btn-watch-demo">
+              <i class="fa-solid fa-circle-play"></i> Watch Demo
+            </button>
+          </div>
+          <!-- Real-time statistics counters in Hero -->
+          <div class="hero-stats">
+            <div class="stat-item">
+              <span class="stat-number">98.4%</span>
+              <span class="stat-label">Prediction Accuracy</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number">45K+</span>
+              <span class="stat-label">Safe Routes Provided</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number">12</span>
+              <span class="stat-label">Smart Cities Active</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hero Illustration -->
+        <div class="hero-illustration">
+          <div class="city-map-container">
+            <!-- Simulated City Grid Overlay -->
+            <div class="city-map-graphic">
+              <!-- Grid blocks -->
+              <div class="map-grid-block block-1"></div>
+              <div class="map-grid-block block-2"></div>
+              <div class="map-grid-block block-3"></div>
+              <div class="map-grid-block block-4"></div>
+              
+              <!-- Simulated Path Lines -->
+              <svg class="map-svg-routes" viewBox="0 0 400 300" width="100%" height="100%">
+                <!-- Shortest path (Red/Unsafe) -->
+                <path d="M 50,250 L 220,250 L 220,100 L 350,100" class="svg-route-shortest" />
+                <!-- Recommended path (Green/Safe) -->
+                <path d="M 50,250 L 50,50 L 350,50 L 350,100" class="svg-route-safest" />
+              </svg>
+
+              <!-- Floating Pins -->
+              <div class="map-pin pin-start" style="left: 12%; top: 83%;">
+                <div class="pin-dot"></div>
+                <div class="pin-label">Start</div>
+              </div>
+              
+              <div class="map-pin pin-end" style="left: 88%; top: 33%;">
+                <div class="pin-dot"></div>
+                <div class="pin-label">Destination</div>
+              </div>
+
+              <!-- Unsafe Area Bubble -->
+              <div class="map-hazard-zone" style="left: 55%; top: 45%;">
+                <div class="hazard-ripple"></div>
+                <div class="hazard-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                <div class="hazard-tooltip">Poor Lighting & Crime History</div>
+              </div>
+
+              <!-- Floating interactive route card mockup -->
+              <div class="floating-route-card">
+                <div class="route-card-header">
+                  <span class="route-card-badge bg-green-soft text-green">AI Safe Path Selected</span>
+                  <span class="route-card-score">Safety: 9.8/10</span>
+                </div>
+                <div class="route-card-details">
+                  <div class="route-metric">
+                    <span class="metric-val">12 mins</span>
+                    <span class="metric-lbl">ETA</span>
+                  </div>
+                  <div class="route-divider"></div>
+                  <div class="route-metric">
+                    <span class="metric-val">3.2 km</span>
+                    <span class="metric-lbl">Distance</span>
+                  </div>
+                  <div class="route-divider"></div>
+                  <div class="route-metric">
+                    <span class="metric-val text-green">Optimal</span>
+                    <span class="metric-lbl">Risk Level</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Light reflection floating dots -->
+              <div class="light-emitter" style="left: 20%; top: 20%;"><i class="fa-solid fa-lightbulb"></i></div>
+              <div class="light-emitter" style="left: 75%; top: 75%;"><i class="fa-solid fa-lightbulb"></i></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about-section section-padding">
+      <div class="section-container">
+        <div class="section-header text-center">
+          <span class="section-tag">Proactive vs. Reactive</span>
+          <h2 class="section-title">Redefining Urban Commute & Safety</h2>
+          <p class="section-description">
+            Traditional applications notify contacts after an emergency occurs. SafePath AI utilizes advanced models to ensure emergency situations never happen in the first place.
+          </p>
+        </div>
+
+        <div class="about-grid">
+          <div class="about-card card-gradient-light">
+            <div class="about-icon text-red">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h3>The Old Way (Reactive)</h3>
+            <ul class="about-list">
+              <li>
+                <i class="fa-solid fa-xmark text-danger"></i>
+                <span>Panic buttons pressed *after* an assault has occurred.</span>
+              </li>
+              <li>
+                <i class="fa-solid fa-xmark text-danger"></i>
+                <span>Passive location sharing does not improve the safety of the path.</span>
+              </li>
+              <li>
+                <i class="fa-solid fa-xmark text-danger"></i>
+                <span>Relies on shortest path calculations (routing users through dim, empty lanes).</span>
+              </li>
+              <li>
+                <i class="fa-solid fa-xmark text-danger"></i>
+                <span>Incident reports sit idle in paper archives instead of helping travelers.</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="about-card card-gradient-accent">
+            <div class="about-icon text-green">
+              <i class="fa-solid fa-wand-magic-sparkles"></i>
+            </div>
+            <h3>The SafePath Way (Proactive)</h3>
+            <ul class="about-list">
+              <li>
+                <i class="fa-solid fa-check text-accent"></i>
+                <span>AI predictive modeling maps unsafe spots before users set foot outside.</span>
+              </li>
+              <li>
+                <i class="fa-solid fa-check text-accent"></i>
+                <span>Multi-factor routing ranks pathways using lighting, density, and crowd factors.</span>
+              </li>
+              <li>
+                <i class="fa-solid fa-check text-accent"></i>
+                <span>Dynamic rerouting redirects users dynamically if safety scores drop.</span>
+              </li>
+              <li>
+                <i class="fa-solid fa-check text-accent"></i>
+                <span>Integrates community feedback to alert cities of poor infrastructure.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Objectives Section -->
+    <section id="objectives" class="objectives-section section-padding bg-light">
+      <div class="section-container">
+        <div class="section-header text-center">
+          <span class="section-tag">Our Vision</span>
+          <h2 class="section-title">Transforming Urban Infrastructure</h2>
+          <p class="section-description">
+            SafePath AI is not just a routing tool. We partner with local governments, community leaders, and safety agencies to build smarter, safer environments.
+          </p>
+        </div>
+
+        <div class="objectives-grid">
+          <div class="objective-card">
+            <div class="obj-icon"><i class="fa-solid fa-person-dress"></i></div>
+            <h4>Empower Women's Safety</h4>
+            <p>Give women the agency and real-time knowledge to navigate cities confidently at any time of day or night.</p>
+          </div>
+          <div class="objective-card">
+            <div class="obj-icon"><i class="fa-solid fa-compass-drafting"></i></div>
+            <h4>Predict Unsafe Locations</h4>
+            <p>Model crime patterns, ambient lighting, and pedestrian density to spot high-risk zones before they pose active dangers.</p>
+          </div>
+          <div class="objective-card">
+            <div class="obj-icon"><i class="fa-solid fa-route"></i></div>
+            <h4>Optimize Safety-First Routes</h4>
+            <p>Provide multi-modal safety routing models prioritizing streets that are lit, populated, and actively police-patrolled.</p>
+          </div>
+          <div class="objective-card">
+            <div class="obj-icon"><i class="fa-solid fa-users"></i></div>
+            <h4>Crowdsourced Reporting</h4>
+            <p>Harness the collective voice of communities to quickly flag issues like harassment, street light failures, or unsafe environments.</p>
+          </div>
+          <div class="objective-card">
+            <div class="obj-icon"><i class="fa-solid fa-city"></i></div>
+            <h4>Smart City Integration</h4>
+            <p>Relay infrastructure failures (e.g., broken streetlights, trash pile-ups) directly to city planners to drive targeted improvements.</p>
+          </div>
+          <div class="objective-card">
+            <div class="obj-icon"><i class="fa-solid fa-chart-line"></i></div>
+            <h4>Reduce Commute Risk</h4>
+            <p>Integrate predictive analytics to reduce travel risk for shift workers, students, and lone commuters by up to 82%.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Core Features Section -->
+    <section id="features" class="features-section section-padding">
+      <div class="section-container">
+        <div class="section-header text-center">
+          <span class="section-tag">Key Capabilities</span>
+          <h2 class="section-title">AI-Powered Safety Features</h2>
+          <p class="section-description">
+            Equipped with proprietary data processing layers, SafePath AI delivers reliable and actionable safety routing and risk assessments.
+          </p>
+        </div>
+
+        <div class="features-grid">
+          <!-- Feature 1 -->
+          <div class="feature-card">
+            <div class="feat-icon text-secondary"><i class="fa-solid fa-brain"></i></div>
+            <h3>AI Safety Score</h3>
+            <p>A multi-factor mathematical score calculated using incident logs, street light grids, local activity, and emergency hub proximity.</p>
+          </div>
+          <!-- Feature 2 -->
+          <div class="feature-card">
+            <div class="feat-icon text-accent"><i class="fa-solid fa-route"></i></div>
+            <h3>Safe Route Recommendation</h3>
+            <p>Advanced path-finding algorithm that prioritizes safety markers over geographical distance, optimizing light and visibility.</p>
+          </div>
+          <!-- Feature 3 -->
+          <div class="feature-card">
+            <div class="feat-icon text-warning"><i class="fa-solid fa-user-shield"></i></div>
+            <h3>Crime Prediction Engine</h3>
+            <p>ML models analyzing spatial-temporal data to predict active hotspots based on time of day, season, and historical incidents.</p>
+          </div>
+          <!-- Feature 4 -->
+          <div class="feature-card">
+            <div class="feat-icon text-secondary"><i class="fa-solid fa-lightbulb"></i></div>
+            <h3>Street Lighting Analysis</h3>
+            <p>Utilizes satellite luminosity indices combined with crowdsourced lighting reports to compute active illumination profiles.</p>
+          </div>
+          <!-- Feature 5 -->
+          <div class="feature-card">
+            <div class="feat-icon text-accent"><i class="fa-solid fa-people-group"></i></div>
+            <h3>Crowd Density Detection</h3>
+            <p>Real-time crowd flows calculated using transit databases and active user densities to prevent walking through deserted zones.</p>
+          </div>
+          <!-- Feature 6 -->
+          <div class="feature-card">
+            <div class="feat-icon text-secondary"><i class="fa-solid fa-users-viewfinder"></i></div>
+            <h3>Community Reporting Feed</h3>
+            <p>Direct portal for users to report street problems. Reports are verified, mapped, and immediately integrated into current safety indices.</p>
+          </div>
+          <!-- Feature 7 -->
+          <div class="feature-card">
+            <div class="feat-icon text-danger"><i class="fa-solid fa-bell"></i></div>
+            <h3>Emergency SOS Shield</h3>
+            <p>One-touch buttons that trigger rapid dials, alert emergency services, share location, and direct users to closest safe hubs.</p>
+          </div>
+          <!-- Feature 8 -->
+          <div class="feature-card">
+            <div class="feat-icon text-accent"><i class="fa-solid fa-comments"></i></div>
+            <h3>AI Safety Chatbot</h3>
+            <p>A natural conversational companion answering safety queries, suggesting nearest emergency depots, and giving travel advice.</p>
+          </div>
+          <!-- Feature 9 -->
+          <div class="feature-card">
+            <div class="feat-icon text-secondary"><i class="fa-solid fa-chart-column"></i></div>
+            <h3>Authority Dashboard</h3>
+            <p>Admin and municipal monitoring interface illustrating infrastructure recommendations and community verified complaints.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="how-works-section section-padding bg-light">
+      <div class="section-container">
+        <div class="section-header text-center">
+          <span class="section-tag">Simple & Automated</span>
+          <h2 class="section-title">How SafePath Protects You</h2>
+          <p class="section-description">
+            From entering your destination to locking your front door, our background processors work tirelessly to secure your route.
+          </p>
+        </div>
+
+        <div class="workflow-container">
+          <div class="workflow-step">
+            <div class="step-num">1</div>
+            <div class="step-icon"><i class="fa-solid fa-magnifying-glass-location"></i></div>
+            <h4>Enter Destination</h4>
+            <p>User inputs their starting point and destination in the simple, responsive portal.</p>
+          </div>
+          
+          <div class="workflow-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+          
+          <div class="workflow-step">
+            <div class="step-num">2</div>
+            <div class="step-icon"><i class="fa-solid fa-server"></i></div>
+            <h4>Gather AI Factors</h4>
+            <p>AI aggregates local crime history, lighting, crowds, current weather, and live user reports.</p>
+          </div>
+
+          <div class="workflow-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+
+          <div class="workflow-step">
+            <div class="step-num">3</div>
+            <div class="step-icon"><i class="fa-solid fa-calculator"></i></div>
+            <h4>Calculate Safety Index</h4>
+            <p>Safety indices are computed for all viable paths using spatial machine learning models.</p>
+          </div>
+
+          <div class="workflow-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+
+          <div class="workflow-step">
+            <div class="step-num">4</div>
+            <div class="step-icon"><i class="fa-solid fa-shield-halved"></i></div>
+            <h4>Navigate Securely</h4>
+            <p>The safest path is displayed. The platform monitors progress and updates alerts live.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- UN SDGs Section -->
+    <section id="sdgs" class="sdg-section section-padding">
+      <div class="section-container">
+        <div class="section-header text-center">
+          <span class="section-tag">Global Impact</span>
+          <h2 class="section-title">United Nations Sustainable Development Goals</h2>
+          <p class="section-description">
+            SafePath AI actively contributes to the UN's 2030 Agenda by solving critical socio-technical urban problems.
+          </p>
+        </div>
+
+        <div class="sdgs-grid">
+          <!-- SDG 3 -->
+          <div class="sdg-card sdg-3">
+            <div class="sdg-badge">SDG 3</div>
+            <h3>Good Health & Well-being</h3>
+            <p>Reducing mental distress, anxiety, and physical injury during travel through proactive risk minimization.</p>
+            <div class="sdg-meta">Target: 3.6 - Halve global road safety risks</div>
+          </div>
+          <!-- SDG 5 -->
+          <div class="sdg-card sdg-5">
+            <div class="sdg-badge">SDG 5</div>
+            <h3>Gender Equality</h3>
+            <p>Eliminating violence, harassment, and restriction of movement for women in public and private spaces.</p>
+            <div class="sdg-meta">Target: 5.2 - Eliminate all forms of violence against women</div>
+          </div>
+          <!-- SDG 9 -->
+          <div class="sdg-card sdg-9">
+            <div class="sdg-badge">SDG 9</div>
+            <h3>Industry, Innovation & Infrastructure</h3>
+            <p>Applying cutting-edge AI technologies and geospatial telemetry to update and monitor urban roadways.</p>
+            <div class="sdg-meta">Target: 9.1 - Develop quality, reliable infrastructure</div>
+          </div>
+          <!-- SDG 11 -->
+          <div class="sdg-card sdg-11">
+            <div class="sdg-badge">SDG 11</div>
+            <h3>Sustainable Cities & Communities</h3>
+            <p>Ensuring access to safe, affordable, accessible, and sustainable transport systems for all, especially women and vulnerable populations.</p>
+            <div class="sdg-meta">Target: 11.2 - Safe, accessible public transit networks</div>
+          </div>
+          <!-- SDG 16 -->
+          <div class="sdg-card sdg-16">
+            <div class="sdg-badge">SDG 16</div>
+            <h3>Peace, Justice & Strong Institutions</h3>
+            <p>Collaborating with local police departments and authorities to implement transparency, reporting, and safer neighborhoods.</p>
+            <div class="sdg-meta">Target: 16.1 - Reduce all forms of violence</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tech Stack Section -->
+    <section id="tech-stack" class="tech-section section-padding bg-light">
+      <div class="section-container">
+        <div class="section-header text-center">
+          <span class="section-tag">System Architecture</span>
+          <h2 class="section-title">The SafePath Technology Stack</h2>
+          <p class="section-description">
+            Built using industry-standard cloud layers, scalable database schemas, and highly optimized predictive machine learning algorithms.
+          </p>
+        </div>
+
+        <div class="tech-grid">
+          <div class="tech-category">
+            <h4>Frontend</h4>
+            <ul>
+              <li><span class="tech-tag">React</span></li>
+              <li><span class="tech-tag">Next.js</span></li>
+              <li><span class="tech-tag">TypeScript</span></li>
+              <li><span class="tech-tag">Tailwind CSS</span></li>
+              <li><span class="tech-tag">Shadcn UI</span></li>
+              <li><span class="tech-tag">Framer Motion</span></li>
+            </ul>
+          </div>
+          
+          <div class="tech-category">
+            <h4>Backend & API</h4>
+            <ul>
+              <li><span class="tech-tag">Node.js</span></li>
+              <li><span class="tech-tag">Express.js</span></li>
+              <li><span class="tech-tag">Python FastAPI</span></li>
+              <li><span class="tech-tag">RESTful API</span></li>
+            </ul>
+          </div>
+
+          <div class="tech-category">
+            <h4>Machine Learning</h4>
+            <ul>
+              <li><span class="tech-tag">Scikit-Learn</span></li>
+              <li><span class="tech-tag">TensorFlow</span></li>
+              <li><span class="tech-tag">Random Forest</span></li>
+              <li><span class="tech-tag">XGBoost</span></li>
+            </ul>
+          </div>
+
+          <div class="tech-category">
+            <h4>Databases & GIS</h4>
+            <ul>
+              <li><span class="tech-tag">PostgreSQL / PostGIS</span></li>
+              <li><span class="tech-tag">MongoDB</span></li>
+              <li><span class="tech-tag">Redis Cache</span></li>
+              <li><span class="tech-tag">Leaflet / OpenStreetMap</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Video Demo Modal (Simulated Watch Demo) -->
+    <div id="demo-modal" class="modal">
+      <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h3 class="modal-title">SafePath AI Product Walkthrough</h3>
+        <div class="modal-body">
+          <div class="video-placeholder">
+            <div class="play-btn-large"><i class="fa-solid fa-play"></i></div>
+            <div class="placeholder-text">
+              <h4>Watch SafePath AI in Action</h4>
+              <p>Pitch Deck & Live Mobile Route Recommendation Simulation for Smart City Planners.</p>
+            </div>
+            <!-- Interactive Demo Video Simulation Screen -->
+            <div class="demo-screen-slider">
+              <div class="slider-slide slide-active">
+                <i class="fa-solid fa-map-location-dot"></i>
+                <p>1. Route computation between Rajiv Chowk and Mandi House in New Delhi</p>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer" style="display:flex; gap:0.5rem">
+            <a href="user.html" class="btn btn-primary w-full text-center">Launch User Portal</a>
+            <a href="admin.html" class="btn btn-secondary w-full text-center" style="background-color:transparent; color:var(--color-primary); border:1px solid var(--color-border)">Launch Admin Panel</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+      <div class="footer-container">
+        <div class="footer-logo">
+          <span class="logo-text text-white">SafePath <span class="logo-accent">AI</span></span>
+          <p>Safer Routes. Smarter Cities. Empowered Women.</p>
+        </div>
+        <div class="footer-copy">
+          <p>&copy; 2026 SafePath AI Inc. All Rights Reserved. Built for Hackathons & Sustainable Smart Cities.</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+
+
+  <!-- Leaflet Map JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <!-- Chart.js for reports -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Custom Logic JS -->
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SafePath AI — User Safety Portal</title>
+  <meta name="description" content="SafePath AI Unified User Safety Portal - Proactive commuter safety and route navigation.">
+  <meta name="theme-color" content="#0F172A">
+  <!-- Leaflet Map CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+</head>
+<body class="user-portal-body">
+
+  <!-- Top Portal Header -->
+  <header class="portal-header">
+    <div class="header-container-fluid">
+      <div class="header-left">
+        <a href="index.html" class="logo">
+          <div class="logo-icon">
+            <i class="fa-solid fa-shield-halved"></i>
+          </div>
+          <span class="logo-text">SafePath <span class="logo-accent">AI</span> <span class="portal-badge text-green">User Portal</span></span>
+        </a>
+      </div>
+      <div class="header-right">
+        <!-- Quick Status Indicator -->
+        <div class="status-indicator">
+          <span class="status-dot"></span>
+          <span class="status-text">AI Systems Online</span>
+        </div>
+        <a href="index.html" class="btn btn-secondary btn-sm btn-back-landing">
+          <i class="fa-solid fa-arrow-left"></i> Exit to Landing
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Unified Main Dashboard Screen -->
+  <main class="user-dashboard-wrapper">
+    <div class="user-dashboard-grid">
+      
+      <!-- ==================== LEFT COLUMN: STATUS & SOS ==================== -->
+      <section class="user-grid-col col-left">
+        
+        <!-- Safety Score gauge card -->
+        <div class="app-card safety-score-card mb-4">
+          <div class="card-inner-flex">
+            <div class="gauge-section">
+              <div class="score-circle">
+                <div class="score-number" id="overview-safety-score">9.2</div>
+                <div class="score-label">Safe Zone</div>
+              </div>
+            </div>
+            <div class="gauge-details">
+              <h3>Your Local Safety Score</h3>
+              <p class="text-secondary text-sm">Calculated from lighting, crime rates, crowds, and verified reports in your 1.5km radius.</p>
+              <div class="score-factors">
+                <div class="factor-badge"><i class="fa-solid fa-lightbulb text-green"></i> Lighting: High</div>
+                <div class="factor-badge"><i class="fa-solid fa-people-group text-green"></i> Crowds: Medium</div>
+                <div class="factor-badge"><i class="fa-solid fa-circle-check text-green"></i> Incidents: Low</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Infrastructure Alerts Box -->
+        <div class="app-card danger-alert-box mb-4">
+          <div class="alert-box-header">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <span>Active Safety Alerts</span>
+          </div>
+          <div class="alert-box-body">
+            <p class="text-sm" id="alerts-banner-text">3 lighting defects and 1 high-density crowd cluster detected in your municipal sector. Commuters are advised to avoid <strong>Middle Circle Alleyway</strong>.</p>
+          </div>
+        </div>
+
+        <!-- SOS PANIC SHIELD CARD -->
+        <div class="app-card emergency-sos-card">
+          <div class="card-header border-none pb-0 text-center">
+            <h4 class="text-danger flex-center gap-2"><i class="fa-solid fa-circle-exclamation"></i> Emergency SOS Shield</h4>
+            <p class="text-secondary text-sm m-0">One-touch immediate assistance and live location broadcast.</p>
+          </div>
+          <div class="card-body text-center">
+            <!-- Massive Panic Button -->
+            <div class="sos-trigger-container py-4">
+              <button class="btn-sos-massive" id="btn-massive-sos">
+                <span class="sos-text">SOS</span>
+                <span class="sos-subtext">Tap to Broadcast Panic</span>
+              </button>
+            </div>
+
+            <!-- Active SOS alert banner -->
+            <div class="sos-active-alert-banner mt-2 mb-4" id="sos-active-banner">
+              <div class="banner-icon"><i class="fa-solid fa-circle-exclamation"></i></div>
+              <div class="banner-body">
+                <h4>SOS BROADCAST ACTIVE!</h4>
+                <p class="text-xs">Location coordinates and micro-audio feeds are streaming to emergency centers. Police dispatched.</p>
+              </div>
+              <button class="btn btn-secondary btn-sm mt-2" id="btn-deactivate-sos">Deactivate SOS</button>
+            </div>
+
+            <!-- Quick speed dials -->
+            <div class="emergency-actions-grid mt-4">
+              <a href="tel:100" class="emergency-btn police">
+                <i class="fa-solid fa-user-shield"></i>
+                <span>Call Police (100)</span>
+              </a>
+              <button class="emergency-btn family" id="btn-emergency-family">
+                <i class="fa-solid fa-heart"></i>
+                <span>Call Family</span>
+              </button>
+              <button class="emergency-btn share-location" id="btn-emergency-share-gps">
+                <i class="fa-solid fa-location-arrow"></i>
+                <span>Share Live GPS</span>
+              </button>
+            </div>
+
+            <!-- Contacts list -->
+            <div class="emergency-contacts-list mt-6 text-left">
+              <h5 class="text-sm mb-2 border-bottom pb-1">Primary Safety Circle</h5>
+              <ul class="contacts-list">
+                <li>
+                  <div class="contact-avatar"><i class="fa-solid fa-house"></i></div>
+                  <div class="contact-details">
+                    <span class="contact-name">Home (Family Contact)</span>
+                    <span class="contact-number">+91 98765 43210</span>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ==================== CENTER COLUMN: MAP & NAVIGATION CORE ==================== -->
+      <section class="user-grid-col col-center">
+        
+        <!-- Address search input panel -->
+        <div class="app-card mb-4">
+          <div class="card-header pb-2">
+            <h4><i class="fa-solid fa-route"></i> Compute Safe Route</h4>
+          </div>
+          <div class="card-body">
+            <div class="route-search-fields-grid">
+              <div class="form-group m-0">
+                <label for="route-start" class="sr-only">Starting Point</label>
+                <div class="input-with-icon">
+                  <i class="fa-solid fa-circle-dot text-secondary input-left-icon"></i>
+                  <input type="text" id="route-start" class="form-control" placeholder="Starting Point (Rajiv Chowk Metro Station)" value="Rajiv Chowk Metro Station">
+                </div>
+              </div>
+              <div class="form-group m-0">
+                <label for="route-end" class="sr-only">Destination</label>
+                <div class="input-with-icon">
+                  <i class="fa-solid fa-location-dot text-danger input-left-icon"></i>
+                  <input type="text" id="route-end" class="form-control" placeholder="Enter landmark or coordinates" value="Mandi House Metro Station">
+                </div>
+              </div>
+              <button class="btn btn-primary" id="btn-calculate-routes">Calculate</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Route comparison list overlay -->
+        <div class="route-comparisons-row mb-4" id="routes-comparison-list">
+          <!-- Safest -->
+          <div class="route-option-card active-route" data-route-id="safest">
+            <div class="route-option-header">
+              <span class="route-type-badge bg-green-soft text-green">AI Recommended (Safest)</span>
+              <span class="safety-score-label text-green">9.8/10</span>
+            </div>
+            <h5 class="route-title">Via KG Marg Boulevard</h5>
+            <div class="route-meta-grid">
+              <div><strong>1.8 km</strong></div>
+              <div><strong>8 mins</strong></div>
+              <div><i class="fa-solid fa-lightbulb text-green"></i> High Light</div>
+            </div>
+          </div>
+          <!-- Shortest -->
+          <div class="route-option-card" data-route-id="shortest">
+            <div class="route-option-header">
+              <span class="route-type-badge bg-danger-soft text-danger">Shortest (Unlit Alley)</span>
+              <span class="safety-score-label text-danger">4.5/10</span>
+            </div>
+            <h5 class="route-title">Via Middle Circle Alleyway</h5>
+            <div class="route-meta-grid">
+              <div><strong>1.1 km</strong></div>
+              <div><strong>4 mins</strong></div>
+              <div><i class="fa-solid fa-lightbulb text-red"></i> Poor Light</div>
+            </div>
+          </div>
+          <!-- Alternative -->
+          <div class="route-option-card" data-route-id="alternative">
+            <div class="route-option-header">
+              <span class="route-type-badge bg-warning-soft text-warning">Alternative Path</span>
+              <span class="safety-score-label text-warning">7.2/10</span>
+            </div>
+            <h5 class="route-title">Via Barakhamba Road</h5>
+            <div class="route-meta-grid">
+              <div><strong>2.2 km</strong></div>
+              <div><strong>10 mins</strong></div>
+              <div><i class="fa-solid fa-lightbulb text-warning"></i> Medium Light</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Interactive Map Panel -->
+        <div class="app-card map-card mb-4 flex-grow-1">
+          <div class="map-view-panel-full">
+            <div id="user-interactive-map" class="map-container-canvas"></div>
+            
+            <!-- Map overlay filters and legend -->
+            <div class="map-floating-overlay-user">
+              <div class="map-legend-user card-backdrop-glow">
+                <h5>Map Legend</h5>
+                <div class="legend-item"><span class="legend-line safe"></span><span>Safest Recommended</span></div>
+                <div class="legend-item"><span class="legend-line dangerous"></span><span>Shortest (High Risk)</span></div>
+                <div class="legend-item"><span class="legend-dot police"></span><span>Police Station</span></div>
+                <div class="legend-item"><span class="legend-dot hospital"></span><span>Hospital</span></div>
+                <div class="legend-item"><span class="legend-dot incident"></span><span>Reported Incident</span></div>
+              </div>
+
+              <div class="map-filter-toggles-user mt-2">
+                <button class="btn-map-filter active" id="toggle-layer-heatmap"><i class="fa-solid fa-circle-half-stroke"></i> Heatmap</button>
+                <button class="btn-map-filter active" id="toggle-layer-police"><i class="fa-solid fa-user-shield"></i> Police</button>
+                <button class="btn-map-filter active" id="toggle-layer-hospitals"><i class="fa-solid fa-house-medical"></i> Clinics</button>
+                <button class="btn-map-filter active" id="toggle-layer-lights"><i class="fa-solid fa-lightbulb"></i> Streetlights</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- GPS Simulation & Journey Tracking Console -->
+        <div class="app-card live-tracking-console-card">
+          <div class="card-header bg-dark text-white flex-between py-3">
+            <div class="tracking-title-section">
+              <span class="badge badge-pulse bg-green-soft text-green" id="journey-state-badge"><span class="pulse-dot"></span> Monitor Ready</span>
+              <h4 class="text-white mt-1 m-0">Journey Monitor</h4>
+            </div>
+            <div class="tracking-top-actions">
+              <button class="btn btn-secondary btn-sm" id="btn-start-tracking-from-map">Start Monitoring</button>
+            </div>
+          </div>
+          <div class="card-body py-4">
+            <!-- Progress Bar -->
+            <div class="progress-bar-container mb-4">
+              <div class="progress-bar-labels">
+                <span class="text-xs text-secondary font-weight-500" id="lbl-start-pt">Rajiv Chowk Station</span>
+                <span class="text-xs font-weight-700 text-secondary" id="tracking-percentage">0%</span>
+                <span class="text-xs text-secondary font-weight-500" id="lbl-end-pt">Mandi House Station</span>
+              </div>
+              <div class="progress-track mt-1">
+                <div class="progress-fill" id="journey-progress-fill" style="width: 0%;"></div>
+              </div>
+            </div>
+
+            <!-- Stats grid -->
+            <div class="grid-3-col mb-4">
+              <div class="metric-block">
+                <span class="metric-title text-xs text-secondary">Remaining ETA</span>
+                <span class="metric-value font-weight-700 text-lg" id="tracking-eta">-- min</span>
+              </div>
+              <div class="metric-block">
+                <span class="metric-title text-xs text-secondary">Distance Left</span>
+                <span class="metric-value font-weight-700 text-lg" id="tracking-distance">-- km</span>
+              </div>
+              <div class="metric-block">
+                <span class="metric-title text-xs text-secondary">Path Risk Level</span>
+                <span class="metric-value font-weight-700 text-lg text-green" id="tracking-risk">Optimal</span>
+              </div>
+            </div>
+
+            <!-- Timeline logs -->
+            <div class="journey-simulation-control-row flex-between border-top pt-4">
+              <div class="timeline-logs-peek flex-grow-1 mr-4">
+                <h5 class="text-xs text-secondary mb-1">Live Tracking Timeline Logs</h5>
+                <div class="timeline-peek-container" id="tracking-timeline-logs">
+                  <div class="p-2 text-center text-xs text-secondary">No active journey. Calculate route and click "Start Monitoring" above.</div>
+                </div>
+              </div>
+              <div class="simulation-actions-buttons flex flex-col gap-2">
+                <button class="btn btn-secondary btn-sm" id="btn-simulate-gps-step" disabled>Step GPS</button>
+                <button class="btn btn-text text-danger btn-sm p-0 text-center" id="btn-cancel-journey" disabled>Cancel</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ==================== RIGHT COLUMN: AI ASSISTANT & HAZARDS ==================== -->
+      <section class="user-grid-col col-right">
+        
+        <!-- AI Safety Chatbot Card -->
+        <div class="app-card chatbot-card mb-4 flex-grow-1 flex flex-col">
+          <div class="card-header bg-dark text-white flex-between py-3">
+            <div class="chatbot-header-left flex align-center gap-2">
+              <div class="bot-avatar"><i class="fa-solid fa-robot"></i></div>
+              <div>
+                <h4 class="text-white m-0">SafePath AI Helper</h4>
+                <span class="text-xs text-green" style="display:flex; align-items:center; gap:0.25rem;"><span class="status-dot-green" style="background-color:var(--color-accent); width:6px; height:6px; border-radius:50%"></span> Online Companion</span>
+              </div>
+            </div>
+            <button class="btn btn-text text-white btn-sm" id="btn-clear-chat"><i class="fa-solid fa-trash-can"></i> Clear</button>
+          </div>
+          
+          <!-- Messages container -->
+          <div class="chatbot-messages-body flex-grow-1 p-3" id="chat-messages-container" style="overflow-y:auto; max-height: 250px;">
+            <div class="chat-message bot">
+              <div class="message-content">
+                <p>Hello! I am your SafePath AI helper. Ask me about routes, nearest safe havens, or night travel tips.</p>
+              </div>
+              <span class="message-time">Just Now</span>
+            </div>
+          </div>
+
+          <!-- Suggestion query chips -->
+          <div class="chat-quick-queries p-2 bg-light border-top">
+            <button class="query-chip text-xs" data-question="Is the route to Mandi House Metro Station safe right now?">Is route to Mandi House safe?</button>
+            <button class="query-chip text-xs" data-question="Where is the nearest police station from Rajiv Chowk Metro Station?">Nearest police station?</button>
+            <button class="query-chip text-xs" data-question="Provide night travel safety guidelines.">Night travel tips?</button>
+          </div>
+
+          <!-- Input form -->
+          <div class="chatbot-input-bar border-top p-2 bg-card">
+            <form id="chat-input-form" class="flex w-full">
+              <label for="chat-text-input" class="sr-only">Ask safety query</label>
+              <input type="text" id="chat-text-input" class="form-control mr-2" placeholder="Ask a safety question..." required style="height:38px; border-radius:var(--radius-md)">
+              <button type="submit" class="btn btn-secondary" style="padding:0.5rem 0.9rem"><i class="fa-solid fa-paper-plane"></i></button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Community Incident Hazard Form Card -->
+        <div class="app-card community-reporting-card">
+          <div class="card-header pb-2 border-bottom">
+            <h4><i class="fa-solid fa-flag"></i> Submit Hazard Alert</h4>
+            <p class="text-secondary text-sm m-0">Pinpoint poor lighting or safety issues on the map.</p>
+          </div>
+          <div class="card-body">
+            <form id="incident-report-form">
+              <div class="form-group mb-3">
+                <label for="report-incident-type" class="form-label text-xs">Hazard Category</label>
+                <select id="report-incident-type" class="form-control" required style="height: 36px; padding: 0.35rem 0.75rem; font-size: 0.85rem">
+                  <option value="" disabled selected>Select category...</option>
+                  <option value="Poor Lighting">Poor / Broken Street Lighting</option>
+                  <option value="Harassment">Verbal / Physical Harassment</option>
+                  <option value="Suspicious Activity">Suspicious Activity / Loitering</option>
+                  <option value="Unsafe Road">Unsafe Roadway Structure</option>
+                  <option value="Road Damage">Severe Road Damage</option>
+                  <option value="Flood">Water Flooding</option>
+                  <option value="Accident">Traffic Accident</option>
+                </select>
+              </div>
+
+              <div class="form-group mb-3">
+                <label for="report-location-select" class="form-label text-xs">Location Zone</label>
+                <select id="report-location-select" class="form-control" required style="height: 36px; padding: 0.35rem 0.75rem; font-size: 0.85rem">
+                  <option value="" disabled selected>Choose nearest location...</option>
+                  <option value="Connaught Lane Crossing">Connaught Lane Crossing</option>
+                  <option value="Middle Circle Alleyway">Middle Circle Alleyway</option>
+                  <option value="Barakhamba Crossroad">Barakhamba Crossroad</option>
+                  <option value="Janpath Metro Gate 2">Janpath Metro Gate 2</option>
+                  <option value="KG Marg Boulevard">KG Marg Boulevard</option>
+                </select>
+              </div>
+
+              <div class="form-group mb-3">
+                <label for="report-description" class="form-label text-xs">Description details</label>
+                <textarea id="report-description" class="form-control" rows="2" placeholder="Explain the danger (e.g. 'Street light broken')" required style="font-size:0.85rem; padding: 0.5rem"></textarea>
+              </div>
+
+              <button type="submit" class="btn btn-primary btn-sm w-full py-2">Submit Verified Alert</button>
+            </form>
+
+            <!-- Mini neighborhood report feed -->
+            <div class="mini-reports-feed-container mt-4 border-top pt-3">
+              <h5 class="text-xs text-secondary mb-2">Recent Verified Hazard Alerts</h5>
+              <div class="mini-reports-list flex flex-col gap-2" id="reports-main-list" style="overflow-y:auto; max-height:120px;">
+                <!-- Filled dynamically by JS -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Leaflet Map JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <!-- Custom user script -->
+  <script src="user.js"></script>
+</body>
+</html>

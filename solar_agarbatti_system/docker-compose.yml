@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: agarbatti_backend_api
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - NODE_ENV=production
+      - JWT_SECRET=super_secret_jwt_key_agarbatti_2026_solar_app
+      - JWT_REFRESH_SECRET=super_secret_refresh_key_agarbatti_2026_solar_app
+      - FIREBASE_DATABASE_URL=https://solar-agarbatti-default-rtdb.firebaseio.com/
+    restart: always
+
+  web_dashboard:
+    build:
+      context: ./web_dashboard
+      dockerfile: Dockerfile
+    container_name: agarbatti_web_dashboard
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+    depends_on:
+      - api
+    restart: always

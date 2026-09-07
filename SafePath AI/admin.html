@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SafePath AI — Municipal Administration Panel</title>
+  <meta name="description" content="SafePath AI Admin Console - Analytics, System Monitoring, AI Controls, and Incident Audits.">
+  <meta name="theme-color" content="#0F172A">
+</head>
+<body class="admin-portal-body">
+
+  <div id="admin-workspace-container" class="page-container active-view" style="display: flex;">
+    <!-- Sidebar Navigation -->
+    <aside class="app-sidebar">
+      <div class="sidebar-brand">
+        <div class="logo-icon">
+          <i class="fa-solid fa-shield-halved"></i>
+        </div>
+        <span class="brand-text">SafePath <span class="logo-accent">AI</span></span>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="sidebar-nav">
+        <button class="sidebar-item active" data-tab="overview">
+          <i class="fa-solid fa-chart-line"></i> <span>Dashboard Overview</span>
+        </button>
+        <button class="sidebar-item" data-tab="analytics">
+          <i class="fa-solid fa-chart-pie"></i> <span>Analytics Suite</span>
+        </button>
+        <button class="sidebar-item" data-tab="audits">
+          <i class="fa-solid fa-flag"></i> <span>Incident Audits</span>
+        </button>
+        <button class="sidebar-item" data-tab="users">
+          <i class="fa-solid fa-users"></i> <span>User Management</span>
+        </button>
+        <button class="sidebar-item" data-tab="monitoring">
+          <i class="fa-solid fa-server"></i> <span>System Monitoring</span>
+        </button>
+        <button class="sidebar-item" data-tab="ai-controls">
+          <i class="fa-solid fa-gears"></i> <span>AI Model Controls</span>
+        </button>
+        <button class="sidebar-item" data-tab="settings">
+          <i class="fa-solid fa-gear"></i> <span>Settings & Config</span>
+        </button>
+      </nav>
+
+      <!-- Sidebar Footer User Profile -->
+      <div class="sidebar-user">
+        <div class="user-avatar">
+          <i class="fa-solid fa-user-shield"></i>
+        </div>
+        <div class="user-info">
+          <div class="user-name">Director Sharma</div>
+          <div class="user-role">Super Administrator</div>
+        </div>
+        <a href="index.html" class="btn-logout" title="Exit to Landing Page">
+          <i class="fa-solid fa-right-from-bracket"></i>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main App Content Panel -->
+    <main class="app-main-panel">
+      <!-- App Header -->
+      <header class="app-header">
+        <div class="app-header-left">
+          <button class="sidebar-toggle" aria-label="Toggle Sidebar">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <h2 id="current-tab-title">Dashboard Overview</h2>
+        </div>
+        <div class="app-header-right">
+          <!-- Quick Status Indicator -->
+          <div class="status-indicator">
+            <span class="status-dot"></span>
+            <span class="status-text">AI Systems Online</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Workspace Content -->
+      <div class="workspace-content" style="overflow-y: auto; padding: 2rem;">
+
+        <!-- TAB 1: OVERVIEW -->
+        <section id="tab-overview" class="tab-pane active">
+          <div class="grid-3-col mb-6">
+            <div class="admin-summary-card app-card">
+              <h4>Pending Incident Audits</h4>
+              <span class="large-count" id="admin-pending-count">1</span>
+              <p class="text-secondary text-sm">Reports requiring validation checks.</p>
+            </div>
+            <div class="admin-summary-card app-card">
+              <h4>Active Infrastructure Flags</h4>
+              <span class="large-count" id="admin-flags-count">3</span>
+              <p class="text-secondary text-sm">Broken street lights & hazards flagged for municipal response.</p>
+            </div>
+            <div class="admin-summary-card app-card">
+              <h4>Active Police Patrol Units</h4>
+              <span class="large-count">8</span>
+              <p class="text-secondary text-sm">Police units mapped and synced in telemetry networks.</p>
+            </div>
+          </div>
+
+          <div class="grid-2-col-split mb-6">
+            <!-- Pending Report Actions Quick peek -->
+            <div class="app-card">
+              <div class="card-header flex-between">
+                <h4>Pending Submissions Audit</h4>
+                <button class="btn btn-secondary btn-sm" onclick="switchTab('audits')">Go to Audits</button>
+              </div>
+              <div class="card-body">
+                <div class="pending-list" id="admin-pending-reports-quick-list">
+                  <!-- Dynamic reports -->
+                </div>
+              </div>
+            </div>
+
+            <!-- AI Model Summary -->
+            <div class="app-card">
+              <div class="card-header">
+                <h4>Safety Model Summary Status</h4>
+              </div>
+              <div class="card-body">
+                <table class="data-table">
+                  <tbody>
+                    <tr>
+                      <td><strong>Model Version:</strong></td>
+                      <td>SafePath-V3.4.1 (Active)</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Prediction Accuracy:</strong></td>
+                      <td><span class="score-badge safe">98.4%</span></td>
+                    </tr>
+                    <tr>
+                      <td><strong>Retraining Trigger:</strong></td>
+                      <td>Automatic (Every 24h)</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Spatial Crime Edge Weight:</strong></td>
+                      <td>0.65</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 2: ANALYTICS -->
+        <section id="tab-analytics" class="tab-pane">
+          <div class="analytics-container">
+            
+            <div class="analytics-filters-bar mb-6">
+              <div class="app-card">
+                <div class="card-body flex-between">
+                  <h4 class="m-0">AI Analytical Insights Overview</h4>
+                  <div class="time-range-toggles">
+                    <button class="btn-time-filter" data-range="24h">24 Hours</button>
+                    <button class="btn-time-filter active" data-range="7d">7 Days</button>
+                    <button class="btn-time-filter" data-range="30d">30 Days</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid-2-col mb-6">
+              <!-- Safety Trends line chart -->
+              <div class="chart-card-wrapper app-card">
+                <div class="card-header">
+                  <h4>Safety Index Predictions vs. Real Incidents</h4>
+                </div>
+                <div class="card-body chart-canvas-container" style="height: 300px; position: relative;">
+                  <canvas id="chart-safety-trends"></canvas>
+                </div>
+              </div>
+
+              <!-- Incident Categories pie/doughnut chart -->
+              <div class="chart-card-wrapper app-card">
+                <div class="card-header">
+                  <h4>Neighborhood Incident Density</h4>
+                </div>
+                <div class="card-body chart-canvas-container" style="height: 300px; position: relative;">
+                  <canvas id="chart-incident-distribution"></canvas>
+                </div>
+              </div>
+            </div>
+
+            <!-- Heatmap analytics -->
+            <div class="app-card">
+              <div class="card-header">
+                <h4>Predictive Risk Heatmap Analytics</h4>
+              </div>
+              <div class="card-body">
+                <p class="text-sm text-secondary mb-4">This predictive analytical visualization demonstrates crime predictions and light vulnerability overlay blocks across the sector.</p>
+                <div class="analytics-heat-grid">
+                  <div class="heat-cell safe">Grid A1: Index 9.8</div>
+                  <div class="heat-cell safe">Grid A2: Index 9.5</div>
+                  <div class="heat-cell moderate">Grid A3: Index 7.2 (Dim)</div>
+                  <div class="heat-cell dangerous">Grid A4: Index 3.2 (Danger)</div>
+                  <div class="heat-cell safe">Grid A5: Index 9.6</div>
+                  
+                  <div class="heat-cell safe">Grid B1: Index 9.4</div>
+                  <div class="heat-cell moderate">Grid B2: Index 6.8 (Unlit)</div>
+                  <div class="heat-cell safe">Grid B3: Index 9.1</div>
+                  <div class="heat-cell moderate">Grid B4: Index 7.5</div>
+                  <div class="heat-cell safe">Grid B5: Index 9.8</div>
+
+                  <div class="heat-cell safe">Grid C1: Index 9.7</div>
+                  <div class="heat-cell safe">Grid C2: Index 9.2</div>
+                  <div class="heat-cell safe">Grid C3: Index 9.6</div>
+                  <div class="heat-cell safe">Grid C4: Index 9.5</div>
+                  <div class="heat-cell moderate">Grid C5: Index 6.2 (Roadwork)</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 3: AUDITS -->
+        <section id="tab-audits" class="tab-pane">
+          <div class="admin-panel-layout">
+            <div class="grid-2-col-split mb-6">
+              <!-- Pending Report Actions -->
+              <div class="app-card">
+                <div class="card-header">
+                  <h4>Pending Community Submissions</h4>
+                </div>
+                <div class="card-body">
+                  <div class="pending-list" id="admin-pending-reports-list">
+                    <!-- Dynamic reports filled by JS -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- Authority dispatch portal -->
+              <div class="app-card">
+                <div class="card-header">
+                  <h4>Send Authority Dispatch Alerts</h4>
+                </div>
+                <div class="card-body">
+                  <form id="admin-dispatch-form">
+                    <div class="form-group mb-4">
+                      <label for="dispatch-type" class="form-label">Alert Type / Department</label>
+                      <select id="dispatch-type" class="form-control" required style="height:38px; font-size:0.9rem">
+                        <option value="Municipal Engineering">Municipal Engineering (Streetlights/Hazards)</option>
+                        <option value="Police Dispatch">Police Dispatch (Safety Patrol)</option>
+                        <option value="Emergency Medical">Emergency Medical Services (EMS)</option>
+                      </select>
+                    </div>
+                    <div class="form-group mb-4">
+                      <label for="dispatch-description" class="form-label">Dispatch Directive Instructions</label>
+                      <textarea id="dispatch-description" class="form-control" rows="3" placeholder="Specify instructions (e.g., 'Inspect broken streetlamp array on Connaught Lane Crossing.')" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-secondary w-full">Broadcast Dispatch Directive</button>
+                  </form>
+                  <div class="dispatch-history-feed mt-4">
+                    <h5>Recent Dispatches Broadcasted</h5>
+                    <ul class="dispatch-list" id="admin-dispatch-history">
+                      <li>
+                        <span class="disp-meta">Municipal Engineering &bull; 10 mins ago</span>
+                        <p>Repair crew dispatched to fix dark lane bulbs near Connaught Lane Crossing.</p>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 4: USERS -->
+        <section id="tab-users" class="tab-pane">
+          <div class="app-card mb-6">
+            <div class="card-header flex-between">
+              <h4>User & Role Management Dashboard</h4>
+              <button class="btn btn-primary btn-sm" id="btn-add-mock-user"><i class="fa-solid fa-user-plus"></i> Add User</button>
+            </div>
+            <div class="card-body">
+              <div class="table-container">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>User Name</th>
+                      <th>Email ID</th>
+                      <th>Registered Role</th>
+                      <th>Access Level</th>
+                      <th>Account Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="admin-user-table-body">
+                    <!-- Loaded dynamically by JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 5: MONITORING -->
+        <section id="tab-monitoring" class="tab-pane">
+          <div class="grid-2-col mb-6">
+            
+            <!-- Real-time CPU/RAM meters -->
+            <div class="app-card">
+              <div class="card-header">
+                <h4>Server Node Load metrics</h4>
+              </div>
+              <div class="card-body">
+                <div class="monitor-bar-group mb-4">
+                  <div class="flex-between mb-1">
+                    <span>CPU Core Utilization</span>
+                    <span id="txt-cpu-load">42%</span>
+                  </div>
+                  <div class="progress-track" style="height:12px; border-radius:6px">
+                    <div class="progress-fill" id="fill-cpu-load" style="width: 42%; background-color: var(--color-secondary);"></div>
+                  </div>
+                </div>
+
+                <div class="monitor-bar-group mb-4">
+                  <div class="flex-between mb-1">
+                    <span>RAM Node Allocation</span>
+                    <span id="txt-ram-load">68%</span>
+                  </div>
+                  <div class="progress-track" style="height:12px; border-radius:6px">
+                    <div class="progress-fill" id="fill-ram-load" style="width: 68%; background-color: var(--color-warning);"></div>
+                  </div>
+                </div>
+
+                <div class="monitor-bar-group">
+                  <div class="flex-between mb-1">
+                    <span>API Latency Index</span>
+                    <span id="txt-latency">24ms</span>
+                  </div>
+                  <div class="progress-track" style="height:12px; border-radius:6px">
+                    <div class="progress-fill" id="fill-latency" style="width: 12%; background-color: var(--color-accent);"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Database & Redis telemetry -->
+            <div class="app-card">
+              <div class="card-header">
+                <h4>GIS Cache & Pipeline Status</h4>
+              </div>
+              <div class="card-body">
+                <table class="data-table">
+                  <tbody>
+                    <tr>
+                      <td><strong>PostGIS Layer Sync:</strong></td>
+                      <td><span class="status-badge resolved">Active</span></td>
+                    </tr>
+                    <tr>
+                      <td><strong>Redis GIS Queries Hitrate:</strong></td>
+                      <td>96.8%</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Daily API Requests:</strong></td>
+                      <td>42,931 requests</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Database Node Status:</strong></td>
+                      <td><span class="status-badge resolved" style="background-color: var(--color-accent); color: #FFF">Operational</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- TAB 6: AI CONTROLS -->
+        <section id="tab-ai-controls" class="tab-pane">
+          <div class="grid-2-col mb-6">
+            
+            <!-- Hyperparameters sliders -->
+            <div class="app-card">
+              <div class="card-header">
+                <h4>Risk Weight Coefficients Tuning</h4>
+              </div>
+              <div class="card-body">
+                <div class="param-slider-group mb-4">
+                  <div class="flex-between mb-1">
+                    <span>Crime Location Spatial Weight</span>
+                    <strong id="val-crime-weight">0.65</strong>
+                  </div>
+                  <input type="range" class="form-control" id="slider-crime-weight" min="0.0" max="1.0" step="0.05" value="0.65" style="padding:0">
+                </div>
+
+                <div class="param-slider-group mb-4">
+                  <div class="flex-between mb-1">
+                    <span>Lighting Luminance Importance</span>
+                    <strong id="val-light-weight">0.80</strong>
+                  </div>
+                  <input type="range" class="form-control" id="slider-light-weight" min="0.0" max="1.0" step="0.05" value="0.80" style="padding:0">
+                </div>
+
+                <div class="param-slider-group">
+                  <div class="flex-between mb-1">
+                    <span>Crowd Density Risk Penalty</span>
+                    <strong id="val-crowd-weight">0.45</strong>
+                  </div>
+                  <input type="range" class="form-control" id="slider-crowd-weight" min="0.0" max="1.0" step="0.05" value="0.45" style="padding:0">
+                </div>
+              </div>
+            </div>
+
+            <!-- Engine Retraining Triggers -->
+            <div class="app-card">
+              <div class="card-header">
+                <h4>Engine Pipeline Training Queue</h4>
+              </div>
+              <div class="card-body">
+                <div class="form-group mb-4">
+                  <label for="ai-train-interval" class="form-label">Retraining Interval Trigger</label>
+                  <select id="ai-train-interval" class="form-control" style="height:38px; font-size:0.9rem">
+                    <option value="6h">Every 6 Hours</option>
+                    <option value="12h">Every 12 Hours</option>
+                    <option value="24h" selected>Every 24 Hours</option>
+                    <option value="7d">Weekly</option>
+                  </select>
+                </div>
+                
+                <!-- Training button with status -->
+                <div class="training-trigger-section border-top pt-4 text-center">
+                  <button class="btn btn-primary" id="btn-retrain-ai"><i class="fa-solid fa-rotate"></i> Force Retrain Safety Models</button>
+                  <p class="text-xs text-secondary mt-2" id="txt-training-status">Model last trained: Today at 04:30 AM.</p>
+                  
+                  <div class="progress-track mt-2" id="training-progress-container" style="display:none; height:8px">
+                    <div class="progress-fill" id="training-progress-fill" style="width: 0%; background-color: var(--color-accent);"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- TAB 7: SETTINGS -->
+        <section id="tab-settings" class="tab-pane">
+          <div class="app-card">
+            <div class="card-header">
+              <h4>System Configuration Settings</h4>
+            </div>
+            <div class="card-body">
+              <form id="admin-settings-form">
+                <div class="form-group mb-4">
+                  <label for="setting-city" class="form-label">Active Municipal Territory</label>
+                  <input type="text" id="setting-city" class="form-control" value="New Delhi - Central Sector (Zone CP)">
+                </div>
+
+                <div class="form-group mb-4">
+                  <label for="setting-radius" class="form-label">Commuter Radius Boundary Check (meters)</label>
+                  <input type="number" id="setting-radius" class="form-control" value="1500">
+                </div>
+
+                <div class="form-group mb-4">
+                  <label for="setting-api" class="form-label">Municipal Authority API Key Endpoint</label>
+                  <input type="text" id="setting-api" class="form-control" value="sp_auth_mun_93810239_live">
+                </div>
+
+                <div class="flex-between border-top pt-4">
+                  <button type="button" class="btn btn-secondary" id="btn-export-reports">Export Incidents Backup</button>
+                  <button type="submit" class="btn btn-primary">Save Settings Configuration</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Chart.js for reports -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Custom admin script -->
+  <script src="admin.js"></script>
+</body>
+</html>

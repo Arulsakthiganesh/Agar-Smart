@@ -1,0 +1,46 @@
+{
+  "rules": {
+    "machines": {
+      "$machineId": {
+        ".read": "auth != null",
+        ".write": "auth != null"
+      }
+    },
+    "sensors": {
+      "$machineId": {
+        ".read": "auth != null",
+        ".write": "auth != null"
+      }
+    },
+    "cycles": {
+      "$cycleId": {
+        ".read": "auth != null",
+        ".write": "auth != null"
+      }
+    },
+    "alerts": {
+      "$machineId": {
+        ".read": "auth != null",
+        ".write": "auth != null"
+      }
+    },
+    "users": {
+      "$userId": {
+        ".read": "auth != null && auth.uid === $userId",
+        ".write": "auth != null && auth.uid === $userId"
+      }
+    },
+    "analytics": {
+      "$machineId": {
+        ".read": "auth != null",
+        ".write": "auth != null"
+      }
+    },
+    "control": {
+      "$machineId": {
+        ".read": "auth != null",
+        ".write": "auth != null"
+      }
+    }
+  }
+}

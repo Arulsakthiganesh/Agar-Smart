@@ -1,0 +1,51 @@
+name: solar_agarbatti_app
+description: "Smart Solar-Powered Agarbatti Drying & Packaging Mobile App"
+publish_to: "none"
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # BLE & Connectivity
+  flutter_blue_plus: ^1.14.0
+  connectivity_plus: ^5.0.2
+
+  # Firebase Realtime & Core
+  firebase_core: ^2.28.0
+  firebase_database: ^10.3.0
+  firebase_messaging: ^14.8.0
+
+  # State Management & DI
+  flutter_riverpod: ^2.4.9
+  get_it: ^7.6.7
+  provider: ^6.1.1
+
+  # Networking & Storage
+  dio: ^5.4.0
+  sqflite: ^2.3.0
+  path_provider: ^2.1.2
+  shared_preferences: ^2.2.2
+
+  # Visualization & UI Utilities
+  fl_chart: ^0.67.0
+  intl: ^0.19.0
+  flutter_local_notifications: ^16.3.0
+  logging: ^1.2.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/l10n/en.json
+    - assets/l10n/ta.json
+    - assets/l10n/hi.json
