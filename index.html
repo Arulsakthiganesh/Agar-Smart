@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Complete Smart Solar-Powered Agarbatti Drying & Packaging System Web Management Portal">
+  <title>Solar Agarbatti Hub | Management & IoT Portal</title>
+
+  <!-- Google Fonts: Outfit & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- FontAwesome & Chart.js -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <link rel="stylesheet" href="index.css">
+</head>
+<body class="dark-theme">
+  <!-- Layout Wrapper with Sidebar -->
+  <div class="app-layout">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-logo">
+          <i class="fa-solid fa-sun icon-spin-slow"></i>
+        </div>
+        <div class="brand-title">
+          <h2>Solar Agarbatti</h2>
+          <span>SHG IoT Portal</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-menu">
+        <a href="#dashboard" class="nav-item active" data-view="dashboard" onclick="switchView('dashboard', this)">
+          <i class="fa-solid fa-gauge-high"></i>
+          <span class="menu-label">Dashboard</span>
+        </a>
+        <a href="#machines" class="nav-item" data-view="machines" onclick="switchView('machines', this)">
+          <i class="fa-solid fa-microchip"></i>
+          <span class="menu-label">My Machines</span>
+        </a>
+        <a href="#batches" class="nav-item" data-view="batches" onclick="switchView('batches', this)">
+          <i class="fa-solid fa-boxes-stacked"></i>
+          <span class="menu-label">Batch History</span>
+        </a>
+        <a href="#analytics" class="nav-item" data-view="analytics" onclick="switchView('analytics', this)">
+          <i class="fa-solid fa-chart-pie"></i>
+          <span class="menu-label">Analytics & Energy</span>
+        </a>
+        <a href="#alerts" class="nav-item" data-view="alerts" onclick="switchView('alerts', this)">
+          <i class="fa-solid fa-bell"></i>
+          <span class="menu-label">Alerts Log</span>
+          <span class="alert-count-badge" id="sidebar-alert-badge">1</span>
+        </a>
+        <a href="#settings" class="nav-item" data-view="settings" onclick="switchView('settings', this)">
+          <i class="fa-solid fa-gear"></i>
+          <span class="menu-label">Settings & Profile</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-pill">
+          <i class="fa-solid fa-user-gear"></i>
+          <div class="user-info">
+            <strong id="sidebar-user-name">Lakshmi Devi</strong>
+            <small id="sidebar-shg-name">Annai SHG Madurai</small>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+      
+      <!-- Top Navbar Bar -->
+      <header class="navbar">
+        <div class="nav-left">
+          <h2 id="page-title">Real-Time Monitoring Dashboard</h2>
+        </div>
+
+        <div class="nav-actions">
+          <!-- Connection Badge -->
+          <div class="status-badge connected" id="connection-status">
+            <span class="pulse-dot"></span>
+            <span id="status-text">ESP32 BLE Connected</span>
+          </div>
+
+          <!-- Offline Sync Indicator -->
+          <div class="offline-badge hidden" id="offline-badge" onclick="triggerManualSync()">
+            <i class="fa-solid fa-wifi-slash"></i>
+            <span id="offline-count">3 Readings Queued</span>
+          </div>
+
+          <!-- Language Selector -->
+          <div class="lang-selector">
+            <i class="fa-solid fa-globe"></i>
+            <select id="lang-select" onchange="changeLanguage(this.value)">
+              <option value="en">English (EN)</option>
+              <option value="ta">தமிழ் (Tamil)</option>
+              <option value="hi">हिंदी (Hindi)</option>
+            </select>
+          </div>
+
+          <!-- High Contrast Accessibility Toggle -->
+          <button class="theme-toggle-btn" id="theme-toggle" onclick="toggleTheme()" title="Toggle High Contrast Dark/Light Mode">
+            <i class="fa-solid fa-moon"></i>
+          </button>
+        </div>
+      </header>
+
+      <!-- View Containers -->
+      <div class="content-body">
+        
+        <!-- ===================================================================
+             1. DASHBOARD VIEW
+             =================================================================== -->
+        <section id="view-dashboard" class="view-section active">
+          <!-- System Status Overview Bar -->
+          <div class="status-banner active" id="main-status-banner">
+            <div class="banner-icon">
+              <i class="fa-solid fa-circle-play" id="status-icon"></i>
+            </div>
+            <div class="banner-info">
+              <h2 id="banner-state-title">SYSTEM ACTIVE — DRYING BATCH #402</h2>
+              <p id="banner-state-desc">Target Temp: 45°C • Target Humidity: 20% • Estimated Time Remaining: 28 min</p>
+            </div>
+            <div class="banner-meta">
+              <span id="last-updated-time">Last update: Just now</span>
+            </div>
+          </div>
+
+          <!-- Critical Alert Bar -->
+          <div class="alert-banner hidden" id="critical-alert-banner">
+            <div class="alert-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+            <div class="alert-content">
+              <strong id="alert-title">SAFETY WARNING: High Chamber Temperature</strong>
+              <p id="alert-message">Temperature reached 61.2°C exceeding max threshold (60°C). Heating elements disabled.</p>
+            </div>
+            <button class="btn-ack" onclick="acknowledgeAlert()">Acknowledge</button>
+          </div>
+
+          <!-- Stage Progress Tracker -->
+          <div class="card stage-card">
+            <div class="card-header">
+              <h3><i class="fa-solid fa-diagram-next"></i> Process Stage Workflow</h3>
+              <span class="badge stage-badge" id="current-stage-badge">1. Drying Phase</span>
+            </div>
+            <div class="stage-tracker">
+              <div class="stage-step active" id="step-drying">
+                <div class="step-icon"><i class="fa-solid fa-fire-burner"></i></div>
+                <div class="step-label">1. Drying</div>
+              </div>
+              <div class="stage-step" id="step-cooling">
+                <div class="step-icon"><i class="fa-solid fa-snowflake"></i></div>
+                <div class="step-label">2. Cooling</div>
+              </div>
+              <div class="stage-step" id="step-fragrance">
+                <div class="step-icon"><i class="fa-solid fa-spray-can"></i></div>
+                <div class="step-label">3. Fragrance</div>
+              </div>
+              <div class="stage-step" id="step-packing">
+                <div class="step-icon"><i class="fa-solid fa-box-open"></i></div>
+                <div class="step-label">4. Packing</div>
+              </div>
+            </div>
+            <div class="progress-bar-container">
+              <div class="progress-bar-fill" id="stage-progress-fill" style="width: 45%;"></div>
+            </div>
+          </div>
+
+          <!-- Metrics Grid -->
+          <div class="metrics-grid">
+            <!-- Temperature Gauge -->
+            <div class="card gauge-card">
+              <div class="card-header">
+                <h3><i class="fa-solid fa-temperature-high"></i> Chamber Temp</h3>
+                <span class="metric-unit">°C</span>
+              </div>
+              <div class="gauge-wrapper">
+                <svg class="gauge-svg" viewBox="0 0 100 100">
+                  <circle class="gauge-bg" cx="50" cy="50" r="40"></circle>
+                  <circle class="gauge-fill temp-fill" id="temp-gauge-circle" cx="50" cy="50" r="40" style="stroke-dashoffset: 120;"></circle>
+                </svg>
+                <div class="gauge-value-display">
+                  <span class="value-number" id="temp-value">38.5</span>
+                  <span class="value-unit">°C</span>
+                </div>
+              </div>
+              <div class="gauge-footer">
+                <span>Min: 20°C</span>
+                <span class="tag-status green" id="temp-status-tag">Optimal</span>
+                <span>Max: 60°C</span>
+              </div>
+            </div>
+
+            <!-- Humidity Gauge -->
+            <div class="card gauge-card">
+              <div class="card-header">
+                <h3><i class="fa-solid fa-droplet"></i> Moisture Content</h3>
+                <span class="metric-unit">%</span>
+              </div>
+              <div class="gauge-wrapper">
+                <svg class="gauge-svg" viewBox="0 0 100 100">
+                  <circle class="gauge-bg" cx="50" cy="50" r="40"></circle>
+                  <circle class="gauge-fill hum-fill" id="hum-gauge-circle" cx="50" cy="50" r="40" style="stroke-dashoffset: 180;"></circle>
+                </svg>
+                <div class="gauge-value-display">
+                  <span class="value-number" id="hum-value">24.2</span>
+                  <span class="value-unit">%</span>
+                </div>
+              </div>
+              <div class="gauge-footer">
+                <span>Target: 20%</span>
+                <span class="tag-status amber" id="hum-status-tag">Drying Active</span>
+                <span>Initial: 65%</span>
+              </div>
+            </div>
+
+            <!-- Solar Power Card -->
+            <div class="card power-card">
+              <div class="card-header">
+                <h3><i class="fa-solid fa-bolt-lightning"></i> Solar & Battery</h3>
+                <span class="tag-power solar" id="power-source-tag"><i class="fa-solid fa-sun"></i> Solar Active</span>
+              </div>
+              <div class="power-details">
+                <div class="power-metric">
+                  <div class="icon-circle yellow"><i class="fa-solid fa-solar-panel"></i></div>
+                  <div class="details">
+                    <span class="label">Solar Output</span>
+                    <strong class="val" id="solar-wattage">180 W</strong>
+                    <small id="solar-voltage">34.2 V Direct</small>
+                  </div>
+                </div>
+                <div class="power-metric">
+                  <div class="icon-circle green"><i class="fa-solid fa-battery-three-quarters"></i></div>
+                  <div class="details">
+                    <span class="label">Battery Storage</span>
+                    <strong class="val" id="battery-pct">88 %</strong>
+                    <small id="battery-voltage">25.4 V LiFePO4</small>
+                  </div>
+                </div>
+              </div>
+              <div class="battery-bar-outer">
+                <div class="battery-bar-inner" id="battery-bar" style="width: 88%;"></div>
+              </div>
+            </div>
+
+            <!-- Safety Card -->
+            <div class="card safety-card">
+              <div class="card-header">
+                <h3><i class="fa-solid fa-shield-halved"></i> Safety & Airflow</h3>
+                <span class="tag-status green" id="smoke-status-tag">CLEAR</span>
+              </div>
+              <div class="safety-grid">
+                <div class="safety-item">
+                  <i class="fa-solid fa-smog"></i>
+                  <span>MQ-2 Smoke Sensor</span>
+                  <strong id="smoke-val">0 (Safe)</strong>
+                </div>
+                <div class="safety-item">
+                  <i class="fa-solid fa-fan"></i>
+                  <span>PWM Airflow Fan</span>
+                  <strong id="fan-speed">80% Speed</strong>
+                </div>
+                <div class="safety-item">
+                  <i class="fa-solid fa-temperature-arrow-up"></i>
+                  <span>Overheat Protection</span>
+                  <strong>Auto-Trip 60°C</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Controls Panel -->
+          <div class="controls-panel card">
+            <div class="card-header">
+              <h3><i class="fa-solid fa-sliders"></i> Machine System Controls</h3>
+              <span class="info-text">Target Settings update ESP32 instantly via BLE / Firebase</span>
+            </div>
+            <div class="controls-body">
+              <div class="button-group">
+                <button class="btn btn-start" id="btn-start" onclick="startDryingCycle()">
+                  <i class="fa-solid fa-play"></i> START DRYING
+                </button>
+                <button class="btn btn-pause" id="btn-pause" onclick="pauseCycle()">
+                  <i class="fa-solid fa-pause"></i> PAUSE
+                </button>
+                <button class="btn btn-stop" id="btn-stop" onclick="stopCycle()">
+                  <i class="fa-solid fa-stop"></i> STOP
+                </button>
+                <button class="btn btn-emergency" id="btn-emergency" onclick="openEmergencyModal()">
+                  <i class="fa-solid fa-power-off"></i> EMERGENCY STOP
+                </button>
+              </div>
+
+              <div class="sliders-grid">
+                <div class="slider-box">
+                  <div class="slider-header">
+                    <label for="temp-slider"><i class="fa-solid fa-temperature-high"></i> Target Temperature (°C)</label>
+                    <span class="slider-val" id="temp-slider-val">45°C</span>
+                  </div>
+                  <input type="range" id="temp-slider" min="20" max="60" value="45" step="1" oninput="updateTempSliderValue(this.value)">
+                  <div class="slider-ticks">
+                    <span>20°C (Gentle)</span>
+                    <span>40°C (Standard)</span>
+                    <span>60°C (Max Limit)</span>
+                  </div>
+                </div>
+
+                <div class="slider-box">
+                  <div class="slider-header">
+                    <label for="hum-slider"><i class="fa-solid fa-droplet"></i> Target Final Moisture (%)</label>
+                    <span class="slider-val" id="hum-slider-val">20%</span>
+                  </div>
+                  <input type="range" id="hum-slider" min="5" max="35" value="20" step="1" oninput="updateHumSliderValue(this.value)">
+                  <div class="slider-ticks">
+                    <span>5% (Extra Dry)</span>
+                    <span>20% (Optimal Fragrance)</span>
+                    <span>35% (Moist)</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Charts Section -->
+          <div class="charts-grid">
+            <div class="card chart-card">
+              <div class="card-header">
+                <h3><i class="fa-solid fa-chart-line"></i> Live Telemetry History</h3>
+              </div>
+              <div class="chart-container">
+                <canvas id="liveTelemetryChart"></canvas>
+              </div>
+            </div>
+
+            <div class="card analytics-summary-card">
+              <div class="card-header">
+                <h3><i class="fa-solid fa-chart-pie"></i> Energy Split</h3>
+              </div>
+              <div class="chart-container pie-container">
+                <canvas id="energySplitChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===================================================================
+             2. MACHINES MANAGEMENT VIEW
+             =================================================================== -->
+        <section id="view-machines" class="view-section">
+          <div class="view-header">
+            <h3>Registered Agarbatti Drying Machines</h3>
+            <button class="btn btn-start" onclick="openRegisterMachineModal()">
+              <i class="fa-solid fa-plus"></i> Register New Machine
+            </button>
+          </div>
+
+          <div class="machines-grid" id="machines-container">
+            <div class="card machine-card">
+              <div class="machine-head">
+                <div class="machine-icon"><i class="fa-solid fa-solar-panel"></i></div>
+                <div>
+                  <h4>SHG Dryer #1 (Madurai Hub)</h4>
+                  <small>Serial: AGAR-2026-MAD-01</small>
+                </div>
+                <span class="tag-status green">ACTIVE</span>
+              </div>
+              <div class="machine-metrics">
+                <div><span>Chamber Temp</span><strong>38.5°C</strong></div>
+                <div><span>Moisture</span><strong>24.2%</strong></div>
+                <div><span>Power</span><strong>Solar 180W</strong></div>
+              </div>
+              <div class="machine-actions">
+                <button class="btn btn-secondary btn-sm" onclick="switchView('dashboard', document.querySelector('[data-view=dashboard]'))">Monitor Live</button>
+              </div>
+            </div>
+
+            <div class="card machine-card">
+              <div class="machine-head">
+                <div class="machine-icon"><i class="fa-solid fa-solar-panel"></i></div>
+                <div>
+                  <h4>SHG Dryer #2 (Dindigul Unit)</h4>
+                  <small>Serial: AGAR-2026-DIN-02</small>
+                </div>
+                <span class="tag-status amber">IDLE</span>
+              </div>
+              <div class="machine-metrics">
+                <div><span>Chamber Temp</span><strong>28.0°C</strong></div>
+                <div><span>Moisture</span><strong>55.0%</strong></div>
+                <div><span>Power</span><strong>Battery 92%</strong></div>
+              </div>
+              <div class="machine-actions">
+                <button class="btn btn-secondary btn-sm" onclick="switchView('dashboard', document.querySelector('[data-view=dashboard]'))">Monitor Live</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===================================================================
+             3. BATCH HISTORY VIEW
+             =================================================================== -->
+        <section id="view-batches" class="view-section">
+          <div class="view-header">
+            <h3>Completed Drying & Packaging Batches</h3>
+            <button class="btn btn-secondary" onclick="exportBatchesCSV()">
+              <i class="fa-solid fa-file-export"></i> Export CSV Report
+            </button>
+          </div>
+
+          <div class="card">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Batch ID</th>
+                  <th>Machine</th>
+                  <th>Duration</th>
+                  <th>Packets Produced</th>
+                  <th>Final Moisture</th>
+                  <th>Quality Score</th>
+                  <th>Energy Source</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>#BATCH-401</strong></td>
+                  <td>Madurai Hub #1</td>
+                  <td>42 min</td>
+                  <td><span class="highlight-text">450 Packets</span></td>
+                  <td>18.5%</td>
+                  <td><span class="tag-status green">9.5 / 10</span></td>
+                  <td>Solar (82%)</td>
+                  <td>Today 09:30 AM</td>
+                </tr>
+                <tr>
+                  <td><strong>#BATCH-400</strong></td>
+                  <td>Madurai Hub #1</td>
+                  <td>45 min</td>
+                  <td><span class="highlight-text">420 Packets</span></td>
+                  <td>19.0%</td>
+                  <td><span class="tag-status green">9.2 / 10</span></td>
+                  <td>Solar (78%)</td>
+                  <td>Yesterday 04:15 PM</td>
+                </tr>
+                <tr>
+                  <td><strong>#BATCH-399</strong></td>
+                  <td>Dindigul Unit #2</td>
+                  <td>50 min</td>
+                  <td><span class="highlight-text">380 Packets</span></td>
+                  <td>20.0%</td>
+                  <td><span class="tag-status green">8.8 / 10</span></td>
+                  <td>Solar (70%)</td>
+                  <td>Yesterday 11:00 AM</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- ===================================================================
+             4. FULL ANALYTICS VIEW
+             =================================================================== -->
+        <section id="view-analytics" class="view-section">
+          <div class="view-header">
+            <h3>Production & Solar Savings Analytics</h3>
+          </div>
+
+          <div class="analytics-metrics-row card" style="padding: 1.5rem;">
+            <div class="stat-box">
+              <i class="fa-solid fa-boxes-stacked icon-green"></i>
+              <span class="num">3,140</span>
+              <span class="desc">30-Day Packets Produced</span>
+            </div>
+            <div class="stat-box">
+              <i class="fa-solid fa-indian-rupee-sign icon-orange"></i>
+              <span class="num">₹2,240</span>
+              <span class="desc">Monthly Solar Energy Savings</span>
+            </div>
+            <div class="stat-box">
+              <i class="fa-solid fa-bolt icon-yellow"></i>
+              <span class="num">78%</span>
+              <span class="desc">Avg Solar Share</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===================================================================
+             5. ALERTS LOG VIEW
+             =================================================================== -->
+        <section id="view-alerts" class="view-section">
+          <div class="view-header">
+            <h3>System Alerts & Security History</h3>
+          </div>
+
+          <div class="alerts-list">
+            <div class="card alert-item critical">
+              <i class="fa-solid fa-temperature-arrow-up icon-red"></i>
+              <div class="alert-details">
+                <strong>TEMP_HIGH: Chamber exceeded 60.0°C limit</strong>
+                <p>Temperature reached 61.2°C at 10:15 AM. Heating coils turned off automatically.</p>
+                <small>Machine: Madurai Hub #1 • Today 10:15 AM</small>
+              </div>
+              <span class="tag-status red">CRITICAL</span>
+            </div>
+            <div class="card alert-item warning">
+              <i class="fa-solid fa-battery-quarter icon-orange"></i>
+              <div class="alert-details">
+                <strong>BATTERY_LOW: Battery under 20%</strong>
+                <p>Battery level dropped to 18%. Switch to solar panel or grid backup.</p>
+                <small>Machine: Dindigul Unit #2 • Yesterday 06:40 PM</small>
+              </div>
+              <span class="tag-status amber">WARNING</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===================================================================
+             6. SETTINGS VIEW
+             =================================================================== -->
+        <section id="view-settings" class="view-section">
+          <div class="view-header">
+            <h3>SHG Artisan Profile & Settings</h3>
+          </div>
+
+          <div class="card settings-card">
+            <h4>Artisan Details</h4>
+            <div class="form-group">
+              <label>Artisan Name</label>
+              <input type="text" value="Lakshmi Devi" class="form-input">
+            </div>
+            <div class="form-group">
+              <label>SHG Group Name</label>
+              <input type="text" value="Annai Women Self Help Group" class="form-input">
+            </div>
+            <div class="form-group">
+              <label>Village Location</label>
+              <input type="text" value="Madurai, Tamil Nadu" class="form-input">
+            </div>
+            <button class="btn btn-start" style="margin-top: 1rem;" onclick="alert('Profile Saved Successfully!')">Save Profile</button>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Register Machine Modal -->
+  <div class="modal-backdrop hidden" id="register-machine-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <i class="fa-solid fa-plus-circle"></i>
+        <h2>Register New Agarbatti Dryer</h2>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Machine Name</label>
+          <input type="text" id="reg-mch-name" placeholder="e.g. SHG Dryer #3" class="form-input">
+        </div>
+        <div class="form-group">
+          <label>Serial Number</label>
+          <input type="text" id="reg-mch-serial" placeholder="e.g. AGAR-2026-MAD-03" class="form-input">
+        </div>
+        <div class="form-group">
+          <label>Location</label>
+          <input type="text" id="reg-mch-loc" placeholder="e.g. Trichy Hub" class="form-input">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeRegisterMachineModal()">Cancel</button>
+        <button class="btn btn-start" onclick="saveNewMachine()">Register Machine</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Emergency Modal Confirmation -->
+  <div class="modal-backdrop hidden" id="emergency-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <i class="fa-solid fa-triangle-exclamation modal-alert-icon"></i>
+        <h2>EMERGENCY SHUTDOWN CONFIRMATION</h2>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to trigger an immediate Emergency Shutdown?</p>
+        <p class="highlight">This will immediately cut off power to all heating coils, fragrance spray pumps, and packaging motors for safety.</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeEmergencyModal()">Cancel</button>
+        <button class="btn btn-emergency" onclick="confirmEmergencyShutdown()">CONFIRM EMERGENCY STOP</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
