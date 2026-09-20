@@ -2,15 +2,7 @@
   "version": 2,
   "name": "agar-smart",
   "cleanUrls": true,
-  "headers": [
-    {
-      "source": "/index.html",
-      "headers": [
-        {
-          "key": "Content-Type",
-          "value": "text/html; charset=utf-8"
-        }
-      ]
-    }
+  "rewrites": [
+    { "source": "/", "destination": "/index.html" }
   ]
 }
