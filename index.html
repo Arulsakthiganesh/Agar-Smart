@@ -1,26 +1,1019 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Complete Smart Solar-Powered Agarbatti Drying & Packaging System Web Management Portal">
+  <meta name="description"
+    content="Complete Smart Solar-Powered Agarbatti Drying & Packaging System Web Management Portal">
   <title>Solar Agarbatti Hub | Management & IoT Portal</title>
 
   <!-- Google Fonts: Outfit & Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap"
+    rel="stylesheet">
 
   <!-- FontAwesome & Chart.js -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  <link rel="stylesheet" href="./index.css">
+  <style>
+    /* ==========================================================================
+   Design System & Color Tokens (HSL Tailored Palettes)
+   ========================================================================== */
+    :root {
+      /* Dark Mode Palette */
+      --bg-primary: #0f1217;
+      --bg-secondary: #171c24;
+      --sidebar-bg: #11151c;
+      --card-bg: rgba(26, 32, 44, 0.85);
+      --card-border: rgba(255, 255, 255, 0.1);
+      --card-hover-border: rgba(255, 152, 0, 0.4);
+
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+
+      /* Vibrant Accent Colors */
+      --solar-amber: #ff9800;
+      --solar-orange: #f57c00;
+      --solar-yellow: #ffd54f;
+
+      --status-green: #10b981;
+      --status-green-glow: rgba(16, 185, 129, 0.3);
+      --status-red: #ef4444;
+      --status-red-glow: rgba(239, 68, 68, 0.3);
+      --status-blue: #3b82f6;
+
+      /* Gradients */
+      --solar-gradient: linear-gradient(135deg, #ff8f00, #ffc107);
+      --glass-bg: rgba(23, 28, 36, 0.7);
+
+      /* Typography */
+      --font-heading: 'Outfit', sans-serif;
+      --font-body: 'Inter', sans-serif;
+
+      --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+      --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+      --border-radius: 16px;
+      --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Light Theme High Contrast Overrides */
+    body.light-theme {
+      --bg-primary: #f1f5f9;
+      --bg-secondary: #ffffff;
+      --sidebar-bg: #e2e8f0;
+      --card-bg: #ffffff;
+      --card-border: #cbd5e1;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --glass-bg: rgba(255, 255, 255, 0.9);
+    }
+
+    /* Base Styles & Reset */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.5;
+      min-height: 100vh;
+      transition: var(--transition-smooth);
+      overflow-x: hidden;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+      font-family: var(--font-heading);
+      letter-spacing: -0.02em;
+    }
+
+    /* Layout Wrapper */
+    .app-layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 260px;
+      background: var(--sidebar-bg);
+      border-right: 1px solid var(--card-border);
+      display: flex;
+      flex-direction: column;
+      padding: 1.5rem 1rem;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 200;
+    }
+
+    .sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      margin-bottom: 2rem;
+      padding-left: 0.5rem;
+    }
+
+    .brand-logo {
+      width: 44px;
+      height: 44px;
+      background: var(--solar-gradient);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 1.4rem;
+      box-shadow: 0 0 15px rgba(255, 152, 0, 0.4);
+    }
+
+    .icon-spin-slow {
+      animation: spin 20s linear infinite;
+    }
+
+    @keyframes spin {
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .brand-title h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.1;
+    }
+
+    .brand-title span {
+      font-size: 0.75rem;
+      color: var(--solar-amber);
+      font-weight: 600;
+    }
+
+    .sidebar-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.85rem 1rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: var(--transition-smooth);
+    }
+
+    .nav-item i {
+      font-size: 1.1rem;
+      width: 20px;
+    }
+
+    .nav-item:hover,
+    .nav-item.active {
+      background: var(--glass-bg);
+      color: var(--solar-amber);
+      border: 1px solid var(--card-border);
+    }
+
+    .nav-item.active {
+      background: linear-gradient(135deg, rgba(255, 152, 0, 0.2), rgba(245, 124, 0, 0.1));
+      border-color: var(--solar-amber);
+    }
+
+    .alert-count-badge {
+      margin-left: auto;
+      background: var(--status-red);
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 0.15rem 0.5rem;
+      border-radius: 10px;
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding-top: 1rem;
+      border-top: 1px solid var(--card-border);
+    }
+
+    .user-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.6rem 0.8rem;
+      background: var(--bg-secondary);
+      border-radius: 12px;
+    }
+
+    .user-pill i {
+      font-size: 1.5rem;
+      color: var(--solar-amber);
+    }
+
+    .user-info {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.2;
+    }
+
+    .user-info strong {
+      font-size: 0.85rem;
+      color: var(--text-main);
+    }
+
+    .user-info small {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* Main Content Area */
+    .main-content {
+      margin-left: 260px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* Top Navbar */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--card-border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 1rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid var(--status-green);
+      color: var(--status-green);
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      background-color: var(--status-green);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--status-green);
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+      }
+
+      70% {
+        transform: scale(1);
+        box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
+      }
+
+      100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+      }
+    }
+
+    .offline-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 1rem;
+      border-radius: 20px;
+      background: rgba(245, 124, 0, 0.2);
+      border: 1px solid var(--solar-orange);
+      color: var(--solar-amber);
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .lang-selector {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--bg-secondary);
+      padding: 0.4rem 0.8rem;
+      border-radius: 10px;
+      border: 1px solid var(--card-border);
+    }
+
+    .lang-selector select {
+      background: transparent;
+      color: var(--text-main);
+      border: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .theme-toggle-btn {
+      background: var(--bg-secondary);
+      border: 1px solid var(--card-border);
+      color: var(--solar-amber);
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      transition: var(--transition-smooth);
+    }
+
+    .theme-toggle-btn:hover {
+      transform: scale(1.05);
+      border-color: var(--solar-amber);
+    }
+
+    /* Content Body & Views */
+    .content-body {
+      padding: 2rem;
+      flex: 1;
+    }
+
+    .view-section {
+      display: none;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .view-section.active {
+      display: flex;
+    }
+
+    .view-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .view-header h3 {
+      font-size: 1.4rem;
+    }
+
+    /* Cards & Components */
+    .card {
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--card-border);
+      border-radius: var(--border-radius);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition-smooth);
+    }
+
+    .card:hover {
+      border-color: var(--card-hover-border);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+    }
+
+    .card-header h3 {
+      font-size: 1.15rem;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    /* Status Banner */
+    .status-banner {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      padding: 1.25rem 2rem;
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(6, 78, 59, 0.3));
+      border: 1px solid var(--status-green);
+      border-radius: var(--border-radius);
+      color: var(--text-main);
+    }
+
+    .banner-icon {
+      font-size: 2.2rem;
+      color: var(--status-green);
+    }
+
+    .banner-info h2 {
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
+
+    .banner-info p {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+    }
+
+    .banner-meta {
+      margin-left: auto;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+    }
+
+    /* Stage Tracker */
+    .stage-tracker {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .stage-step {
+      text-align: center;
+      opacity: 0.4;
+      transition: var(--transition-smooth);
+    }
+
+    .stage-step.active {
+      opacity: 1;
+    }
+
+    .step-icon {
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 0.5rem;
+      border-radius: 50%;
+      background: var(--bg-secondary);
+      border: 2px solid var(--card-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      color: var(--solar-amber);
+    }
+
+    .stage-step.active .step-icon {
+      background: var(--solar-gradient);
+      color: #fff;
+      border-color: var(--solar-amber);
+      box-shadow: 0 0 15px rgba(255, 152, 0, 0.5);
+    }
+
+    .step-label {
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .progress-bar-container {
+      height: 8px;
+      background: var(--bg-secondary);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--solar-gradient);
+      transition: width 0.5s ease;
+    }
+
+    /* Gauges & Metrics */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .gauge-wrapper {
+      position: relative;
+      width: 160px;
+      height: 160px;
+      margin: 0.5rem auto;
+    }
+
+    .gauge-svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+
+    .gauge-bg {
+      fill: none;
+      stroke: var(--bg-secondary);
+      stroke-width: 8;
+    }
+
+    .gauge-fill {
+      fill: none;
+      stroke-width: 8;
+      stroke-linecap: round;
+      stroke-dasharray: 251.2;
+      transition: stroke-dashoffset 0.8s ease;
+    }
+
+    .gauge-fill.temp-fill {
+      stroke: var(--solar-orange);
+    }
+
+    .gauge-fill.hum-fill {
+      stroke: var(--status-blue);
+    }
+
+    .gauge-value-display {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+
+    .gauge-value-display .value-number {
+      font-size: 2.2rem;
+      font-weight: 800;
+      font-family: var(--font-heading);
+    }
+
+    .gauge-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 1rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .tag-status {
+      padding: 0.2rem 0.6rem;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 0.75rem;
+    }
+
+    .tag-status.green {
+      background: rgba(16, 185, 129, 0.2);
+      color: var(--status-green);
+    }
+
+    .tag-status.amber {
+      background: rgba(255, 152, 0, 0.2);
+      color: var(--solar-amber);
+    }
+
+    .tag-status.red {
+      background: rgba(239, 68, 68, 0.2);
+      color: var(--status-red);
+    }
+
+    /* Power Details */
+    .power-details {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .power-metric {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .icon-circle {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+
+    .icon-circle.yellow {
+      background: rgba(255, 213, 79, 0.2);
+      color: var(--solar-yellow);
+    }
+
+    .icon-circle.green {
+      background: rgba(16, 185, 129, 0.2);
+      color: var(--status-green);
+    }
+
+    .power-metric .details {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .power-metric .label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .power-metric .val {
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+
+    .battery-bar-outer {
+      height: 10px;
+      background: var(--bg-secondary);
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .battery-bar-inner {
+      height: 100%;
+      background: var(--status-green);
+      border-radius: 5px;
+      transition: width 0.5s ease;
+    }
+
+    .safety-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+    }
+
+    .safety-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.6rem 0.8rem;
+      background: var(--bg-secondary);
+      border-radius: 8px;
+      font-size: 0.9rem;
+    }
+
+    .safety-item i {
+      color: var(--solar-amber);
+    }
+
+    /* Controls & Buttons */
+    .controls-body {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .button-group {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+    }
+
+    .btn {
+      padding: 0.85rem 1.5rem;
+      border-radius: 12px;
+      font-family: var(--font-heading);
+      font-size: 0.95rem;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      transition: var(--transition-smooth);
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .btn-start {
+      background: var(--status-green);
+      color: #fff;
+    }
+
+    .btn-pause {
+      background: var(--solar-orange);
+      color: #fff;
+    }
+
+    .btn-stop {
+      background: #475569;
+      color: #fff;
+    }
+
+    .btn-emergency {
+      background: var(--status-red);
+      color: #fff;
+      font-size: 1rem;
+      box-shadow: 0 0 15px var(--status-red-glow);
+    }
+
+    .btn-secondary {
+      background: var(--bg-secondary);
+      border: 1px solid var(--card-border);
+      color: var(--text-main);
+    }
+
+    .btn-sm {
+      padding: 0.5rem 1rem;
+      font-size: 0.85rem;
+    }
+
+    .sliders-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .slider-box {
+      background: var(--bg-secondary);
+      padding: 1.25rem;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 600;
+    }
+
+    .slider-header .slider-val {
+      color: var(--solar-amber);
+      font-weight: 800;
+      font-size: 1.1rem;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--solar-amber);
+      height: 6px;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+
+    .slider-ticks {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--text-dim);
+    }
+
+    /* Charts Grid */
+    .charts-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 1.5rem;
+    }
+
+    .chart-container {
+      height: 240px;
+      position: relative;
+    }
+
+    .pie-container {
+      height: 180px;
+    }
+
+    /* Machines View */
+    .machines-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .machine-card {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .machine-head {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .machine-icon {
+      width: 48px;
+      height: 48px;
+      background: rgba(255, 152, 0, 0.2);
+      color: var(--solar-amber);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+    }
+
+    .machine-head h4 {
+      font-size: 1.1rem;
+    }
+
+    .machine-head small {
+      color: var(--text-muted);
+    }
+
+    .machine-head .tag-status {
+      margin-left: auto;
+    }
+
+    .machine-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
+      background: var(--bg-secondary);
+      padding: 0.8rem;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    .machine-metrics div {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .machine-metrics span {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .machine-metrics strong {
+      font-size: 0.95rem;
+    }
+
+    /* Data Tables */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    .data-table th,
+    .data-table td {
+      padding: 1rem;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .data-table th {
+      font-family: var(--font-heading);
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .highlight-text {
+      color: var(--status-green);
+      font-weight: 700;
+    }
+
+    /* Alerts Log View */
+    .alerts-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .alert-item {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    .alert-item i {
+      font-size: 1.8rem;
+    }
+
+    .icon-red {
+      color: var(--status-red);
+    }
+
+    .icon-orange {
+      color: var(--solar-orange);
+    }
+
+    .alert-details {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .alert-details small {
+      color: var(--text-dim);
+      margin-top: 0.2rem;
+    }
+
+    /* Forms & Modals */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .form-group label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .form-input {
+      background: var(--bg-secondary);
+      border: 1px solid var(--card-border);
+      padding: 0.8rem 1rem;
+      border-radius: 10px;
+      color: var(--text-main);
+      font-size: 0.95rem;
+      outline: none;
+    }
+
+    .form-input:focus {
+      border-color: var(--solar-amber);
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--card-border);
+      border-radius: var(--border-radius);
+      padding: 2rem;
+      max-width: 500px;
+      width: 90%;
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      color: var(--solar-amber);
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+  </style>
 </head>
+
 <body class="dark-theme">
   <!-- Layout Wrapper with Sidebar -->
   <div class="app-layout">
-    
+
     <!-- Sidebar Navigation -->
     <aside class="sidebar">
       <div class="sidebar-brand">
@@ -74,7 +1067,7 @@
 
     <!-- Main Content Area -->
     <div class="main-content">
-      
+
       <!-- Top Navbar Bar -->
       <header class="navbar">
         <div class="nav-left">
@@ -105,7 +1098,8 @@
           </div>
 
           <!-- High Contrast Accessibility Toggle -->
-          <button class="theme-toggle-btn" id="theme-toggle" onclick="toggleTheme()" title="Toggle High Contrast Dark/Light Mode">
+          <button class="theme-toggle-btn" id="theme-toggle" onclick="toggleTheme()"
+            title="Toggle High Contrast Dark/Light Mode">
             <i class="fa-solid fa-moon"></i>
           </button>
         </div>
@@ -113,7 +1107,7 @@
 
       <!-- View Containers -->
       <div class="content-body">
-        
+
         <!-- ===================================================================
              1. DASHBOARD VIEW
              =================================================================== -->
@@ -137,7 +1131,8 @@
             <div class="alert-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
             <div class="alert-content">
               <strong id="alert-title">SAFETY WARNING: High Chamber Temperature</strong>
-              <p id="alert-message">Temperature reached 61.2°C exceeding max threshold (60°C). Heating elements disabled.</p>
+              <p id="alert-message">Temperature reached 61.2°C exceeding max threshold (60°C). Heating elements
+                disabled.</p>
             </div>
             <button class="btn-ack" onclick="acknowledgeAlert()">Acknowledge</button>
           </div>
@@ -182,7 +1177,8 @@
               <div class="gauge-wrapper">
                 <svg class="gauge-svg" viewBox="0 0 100 100">
                   <circle class="gauge-bg" cx="50" cy="50" r="40"></circle>
-                  <circle class="gauge-fill temp-fill" id="temp-gauge-circle" cx="50" cy="50" r="40" style="stroke-dashoffset: 120;"></circle>
+                  <circle class="gauge-fill temp-fill" id="temp-gauge-circle" cx="50" cy="50" r="40"
+                    style="stroke-dashoffset: 120;"></circle>
                 </svg>
                 <div class="gauge-value-display">
                   <span class="value-number" id="temp-value">38.5</span>
@@ -205,7 +1201,8 @@
               <div class="gauge-wrapper">
                 <svg class="gauge-svg" viewBox="0 0 100 100">
                   <circle class="gauge-bg" cx="50" cy="50" r="40"></circle>
-                  <circle class="gauge-fill hum-fill" id="hum-gauge-circle" cx="50" cy="50" r="40" style="stroke-dashoffset: 180;"></circle>
+                  <circle class="gauge-fill hum-fill" id="hum-gauge-circle" cx="50" cy="50" r="40"
+                    style="stroke-dashoffset: 180;"></circle>
                 </svg>
                 <div class="gauge-value-display">
                   <span class="value-number" id="hum-value">24.2</span>
@@ -299,10 +1296,12 @@
               <div class="sliders-grid">
                 <div class="slider-box">
                   <div class="slider-header">
-                    <label for="temp-slider"><i class="fa-solid fa-temperature-high"></i> Target Temperature (°C)</label>
+                    <label for="temp-slider"><i class="fa-solid fa-temperature-high"></i> Target Temperature
+                      (°C)</label>
                     <span class="slider-val" id="temp-slider-val">45°C</span>
                   </div>
-                  <input type="range" id="temp-slider" min="20" max="60" value="45" step="1" oninput="updateTempSliderValue(this.value)">
+                  <input type="range" id="temp-slider" min="20" max="60" value="45" step="1"
+                    oninput="updateTempSliderValue(this.value)">
                   <div class="slider-ticks">
                     <span>20°C (Gentle)</span>
                     <span>40°C (Standard)</span>
@@ -315,7 +1314,8 @@
                     <label for="hum-slider"><i class="fa-solid fa-droplet"></i> Target Final Moisture (%)</label>
                     <span class="slider-val" id="hum-slider-val">20%</span>
                   </div>
-                  <input type="range" id="hum-slider" min="5" max="35" value="20" step="1" oninput="updateHumSliderValue(this.value)">
+                  <input type="range" id="hum-slider" min="5" max="35" value="20" step="1"
+                    oninput="updateHumSliderValue(this.value)">
                   <div class="slider-ticks">
                     <span>5% (Extra Dry)</span>
                     <span>20% (Optimal Fragrance)</span>
@@ -375,7 +1375,9 @@
                 <div><span>Power</span><strong>Solar 180W</strong></div>
               </div>
               <div class="machine-actions">
-                <button class="btn btn-secondary btn-sm" onclick="switchView('dashboard', document.querySelector('[data-view=dashboard]'))">Monitor Live</button>
+                <button class="btn btn-secondary btn-sm"
+                  onclick="switchView('dashboard', document.querySelector('[data-view=dashboard]'))">Monitor
+                  Live</button>
               </div>
             </div>
 
@@ -394,7 +1396,9 @@
                 <div><span>Power</span><strong>Battery 92%</strong></div>
               </div>
               <div class="machine-actions">
-                <button class="btn btn-secondary btn-sm" onclick="switchView('dashboard', document.querySelector('[data-view=dashboard]'))">Monitor Live</button>
+                <button class="btn btn-secondary btn-sm"
+                  onclick="switchView('dashboard', document.querySelector('[data-view=dashboard]'))">Monitor
+                  Live</button>
               </div>
             </div>
           </div>
@@ -540,7 +1544,8 @@
               <label>Village Location</label>
               <input type="text" value="Madurai, Tamil Nadu" class="form-input">
             </div>
-            <button class="btn btn-start" style="margin-top: 1rem;" onclick="alert('Profile Saved Successfully!')">Save Profile</button>
+            <button class="btn btn-start" style="margin-top: 1rem;" onclick="alert('Profile Saved Successfully!')">Save
+              Profile</button>
           </div>
         </section>
 
@@ -585,7 +1590,8 @@
       </div>
       <div class="modal-body">
         <p>Are you sure you want to trigger an immediate Emergency Shutdown?</p>
-        <p class="highlight">This will immediately cut off power to all heating coils, fragrance spray pumps, and packaging motors for safety.</p>
+        <p class="highlight">This will immediately cut off power to all heating coils, fragrance spray pumps, and
+          packaging motors for safety.</p>
       </div>
       <div class="modal-footer">
         <button class="btn btn-secondary" onclick="closeEmergencyModal()">Cancel</button>
@@ -594,6 +1600,454 @@
     </div>
   </div>
 
-  <script src="./app.js"></script>
+  <script>
+    /**
+     * Smart Solar-Powered Agarbatti Drying & Packaging System
+     * Web Management & IoT Portal Engine
+     */
+
+    // ==========================================
+    // 1. VIEW SWITCHER ROUTER
+    // ==========================================
+    function switchView(viewId, navElement) {
+      // Hide all view sections
+      const sections = document.querySelectorAll('.view-section');
+      sections.forEach(sec => sec.classList.remove('active'));
+
+      // Show target section
+      const targetSec = document.getElementById(`view-${viewId}`);
+      if (targetSec) targetSec.classList.add('active');
+
+      // Update navigation highlighting
+      const navItems = document.querySelectorAll('.sidebar-menu .nav-item');
+      navItems.forEach(item => item.classList.remove('active'));
+      const activeNav = navElement || document.querySelector(`.sidebar-menu [data-view="${viewId}"]`);
+      if (activeNav) activeNav.classList.add('active');
+
+      // Update page header title
+      const titles = {
+        dashboard: 'Real-Time Monitoring Dashboard',
+        machines: 'Registered IoT Agarbatti Dryers',
+        batches: 'Batch Drying & Packaging History',
+        analytics: 'Production & Solar Energy Analytics',
+        alerts: 'System Security & Alert Logs',
+        settings: 'SHG Artisan Profile & System Settings'
+      };
+
+      const titleElem = document.getElementById('page-title');
+      if (titleElem) titleElem.innerText = titles[viewId] || 'Solar Agarbatti Hub';
+    }
+
+    // ==========================================
+    // 2. LOCALIZATION DICTIONARY (EN, TA, HI)
+    // ==========================================
+    const translations = {
+      en: {
+        title: "Solar Agarbatti Hub",
+        subtitle: "Smart Solar Drying & Packaging System",
+        connected: "ESP32 BLE Connected",
+        drying: "1. Drying Phase",
+        start: "START DRYING",
+        pause: "PAUSE",
+        stop: "STOP",
+        emergency: "EMERGENCY STOP",
+      },
+      ta: {
+        title: "சூரிய ஒளி அகர்பத்தி மையம்",
+        subtitle: "சூரிய மின்சார உலர்த்தல் & பேக்கிங் அமைப்பு",
+        connected: "ESP32 புளூடூத் இணைக்கப்பட்டது",
+        drying: "1. உலர்த்தும் நிலை",
+        start: "உலர்த்தலைத் தொடங்கு",
+        pause: "இடைநிறுத்து",
+        stop: "நிறுத்து",
+        emergency: "அவசர நிறுத்தம்",
+      },
+      hi: {
+        title: "सोलर अगरबत्ती हब",
+        subtitle: "स्मार्ट सोलर सुखाने और पैकिंग प्रणाली",
+        connected: "ESP32 ब्लूटूथ कनेक्टेड",
+        drying: "1. सुखाने का चरण",
+        start: "सुखाना शुरू करें",
+        pause: "विराम लें",
+        stop: "रोकें",
+        emergency: "आपातकालीन रोक",
+      }
+    };
+
+    function changeLanguage(lang) {
+      const t = translations[lang] || translations.en;
+
+      document.getElementById('status-text').innerText = t.connected;
+      document.getElementById('current-stage-badge').innerText = t.drying;
+      document.getElementById('btn-start').innerHTML = `<i class="fa-solid fa-play"></i> ${t.start}`;
+      document.getElementById('btn-pause').innerHTML = `<i class="fa-solid fa-pause"></i> ${t.pause}`;
+      document.getElementById('btn-stop').innerHTML = `<i class="fa-solid fa-stop"></i> ${t.stop}`;
+      document.getElementById('btn-emergency').innerHTML = `<i class="fa-solid fa-power-off"></i> ${t.emergency}`;
+    }
+
+    // ==========================================
+    // 3. ACCESSIBILITY & THEME TOGGLE
+    // ==========================================
+    function toggleTheme() {
+      document.body.classList.toggle('light-theme');
+      const btn = document.getElementById('theme-toggle');
+      if (document.body.classList.contains('light-theme')) {
+        btn.innerHTML = '<i class="fa-solid fa-sun"></i>';
+      } else {
+        btn.innerHTML = '<i class="fa-solid fa-moon"></i>';
+      }
+    }
+
+    // ==========================================
+    // 4. TELEMETRY & SYSTEM STATE
+    // ==========================================
+    let systemState = {
+      isRunning: true,
+      isPaused: false,
+      currentStage: 'drying',
+      targetTemp: 45,
+      targetHumidity: 20,
+      temperature: 38.5,
+      humidity: 24.2,
+      batteryPct: 88,
+      batteryVolts: 25.4,
+      solarVolts: 34.2,
+      solarWatts: 180,
+      smokeDetected: false,
+      smokeVal: 0,
+      fanSpeed: 80,
+    };
+
+    let liveChart = null;
+    let pieChart = null;
+    const maxDataPoints = 15;
+    const chartTimeLabels = [];
+    const tempChartData = [];
+    const humChartData = [];
+
+    function initCharts() {
+      const ctxLine = document.getElementById('liveTelemetryChart')?.getContext('2d');
+      if (!ctxLine) return;
+
+      const now = new Date();
+      for (let i = maxDataPoints - 1; i >= 0; i--) {
+        const t = new Date(now.getTime() - i * 5000);
+        chartTimeLabels.push(t.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
+        tempChartData.push(+(32 + Math.sin(i) * 3).toFixed(1));
+        humChartData.push(+(30 - i * 0.4).toFixed(1));
+      }
+
+      liveChart = new Chart(ctxLine, {
+        type: 'line',
+        data: {
+          labels: chartTimeLabels,
+          datasets: [
+            {
+              label: 'Chamber Temp (°C)',
+              data: tempChartData,
+              borderColor: '#f57c00',
+              backgroundColor: 'rgba(245, 124, 0, 0.15)',
+              fill: true,
+              tension: 0.4,
+              borderWidth: 3,
+            },
+            {
+              label: 'Moisture (%)',
+              data: humChartData,
+              borderColor: '#3b82f6',
+              backgroundColor: 'rgba(59, 130, 246, 0.15)',
+              fill: true,
+              tension: 0.4,
+              borderWidth: 3,
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: { grid: { display: false }, ticks: { color: '#94a3b8' } },
+            y: { grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#94a3b8' } }
+          },
+          plugins: { legend: { display: false } }
+        }
+      });
+
+      const ctxPie = document.getElementById('energySplitChart')?.getContext('2d');
+      if (ctxPie) {
+        pieChart = new Chart(ctxPie, {
+          type: 'doughnut',
+          data: {
+            labels: ['Solar Panel', 'Battery Storage', 'Grid Backup'],
+            datasets: [{
+              data: [78, 18, 4],
+              backgroundColor: ['#ffd54f', '#10b981', '#64748b'],
+              borderWidth: 0
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { position: 'right', labels: { color: '#94a3b8', font: { size: 11 } } }
+            }
+          }
+        });
+      }
+    }
+
+    function updateGauges() {
+      const tempGaugeCircle = document.getElementById('temp-gauge-circle');
+      if (tempGaugeCircle) {
+        document.getElementById('temp-value').innerText = systemState.temperature.toFixed(1);
+        const tempNorm = Math.min(1.0, Math.max(0.0, (systemState.temperature - 10) / 60));
+        tempGaugeCircle.style.strokeDashoffset = 251.2 * (1 - tempNorm);
+      }
+
+      const humGaugeCircle = document.getElementById('hum-gauge-circle');
+      if (humGaugeCircle) {
+        document.getElementById('hum-value').innerText = systemState.humidity.toFixed(1);
+        const humNorm = Math.min(1.0, Math.max(0.0, systemState.humidity / 100));
+        humGaugeCircle.style.strokeDashoffset = 251.2 * (1 - humNorm);
+      }
+
+      if (document.getElementById('battery-pct')) {
+        document.getElementById('battery-pct').innerText = `${systemState.batteryPct.toFixed(0)} %`;
+        document.getElementById('battery-voltage').innerText = `${systemState.batteryVolts.toFixed(1)} V LiFePO4`;
+        document.getElementById('battery-bar').style.width = `${systemState.batteryPct}%`;
+
+        document.getElementById('solar-wattage').innerText = `${systemState.solarWatts.toFixed(0)} W`;
+        document.getElementById('solar-voltage').innerText = `${systemState.solarVolts.toFixed(1)} V Direct`;
+
+        document.getElementById('smoke-val').innerText = `${systemState.smokeVal} (Safe)`;
+        document.getElementById('fan-speed').innerText = `${systemState.fanSpeed}% Speed`;
+        document.getElementById('last-updated-time').innerText = `Last update: ${new Date().toLocaleTimeString()}`;
+      }
+    }
+
+    function runRealtimeSimulationLoop() {
+      setInterval(() => {
+        if (systemState.isRunning && !systemState.isPaused) {
+          if (systemState.temperature < systemState.targetTemp) {
+            systemState.temperature += (Math.random() * 0.4);
+          } else {
+            systemState.temperature -= (Math.random() * 0.3);
+          }
+
+          if (systemState.humidity > systemState.targetHumidity) {
+            systemState.humidity -= (Math.random() * 0.3);
+          } else {
+            if (systemState.currentStage === 'drying') {
+              setStage('cooling');
+            }
+          }
+        }
+
+        systemState.solarVolts = +(32.0 + Math.random() * 4.0).toFixed(1);
+        systemState.solarWatts = +(systemState.solarVolts * 5.2).toFixed(0);
+
+        updateGauges();
+
+        const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        chartTimeLabels.shift();
+        chartTimeLabels.push(timeStr);
+        tempChartData.shift();
+        tempChartData.push(+systemState.temperature.toFixed(1));
+        humChartData.shift();
+        humChartData.push(+systemState.humidity.toFixed(1));
+
+        if (liveChart) liveChart.update('none');
+
+        if (systemState.temperature > 60.0) {
+          triggerHighTempAlert();
+        }
+      }, 3000);
+    }
+
+    // ==========================================
+    // 5. CONTROLS & MACHINE REGISTRATION
+    // ==========================================
+    function setStage(stage) {
+      systemState.currentStage = stage;
+      const stages = ['drying', 'cooling', 'fragrance', 'packing'];
+      const stageLabels = {
+        drying: '1. Drying Phase',
+        cooling: '2. Cooling Phase',
+        fragrance: '3. Fragrance Spray',
+        packing: '4. Packaging Phase'
+      };
+
+      const badge = document.getElementById('current-stage-badge');
+      if (badge) badge.innerText = stageLabels[stage];
+
+      stages.forEach((s) => {
+        const el = document.getElementById(`step-${s}`);
+        if (el) el.classList.remove('active');
+      });
+
+      const activeEl = document.getElementById(`step-${stage}`);
+      if (activeEl) activeEl.classList.add('active');
+
+      const idx = stages.indexOf(stage);
+      const fillPct = ((idx + 1) / 4) * 100;
+      const fillBar = document.getElementById('stage-progress-fill');
+      if (fillBar) fillBar.style.width = `${fillPct}%`;
+    }
+
+    function startDryingCycle() {
+      systemState.isRunning = true;
+      systemState.isPaused = false;
+      setStage('drying');
+
+      const banner = document.getElementById('main-status-banner');
+      banner.className = 'status-banner active';
+      document.getElementById('status-icon').className = 'fa-solid fa-circle-play';
+      document.getElementById('banner-state-title').innerText = 'SYSTEM ACTIVE — DRYING BATCH';
+      document.getElementById('banner-state-desc').innerText = `Target Temp: ${systemState.targetTemp}°C • Target Humidity: ${systemState.targetHumidity}%`;
+    }
+
+    function pauseCycle() {
+      systemState.isPaused = true;
+      const banner = document.getElementById('main-status-banner');
+      banner.className = 'status-banner';
+      document.getElementById('banner-state-title').innerText = 'SYSTEM PAUSED';
+    }
+
+    function stopCycle() {
+      systemState.isRunning = false;
+      systemState.isPaused = false;
+      const banner = document.getElementById('main-status-banner');
+      banner.className = 'status-banner';
+      document.getElementById('status-icon').className = 'fa-solid fa-circle-stop';
+      document.getElementById('banner-state-title').innerText = 'SYSTEM IDLE / READY';
+    }
+
+    function updateTempSliderValue(val) {
+      systemState.targetTemp = parseFloat(val);
+      document.getElementById('temp-slider-val').innerText = `${val}°C`;
+    }
+
+    function updateHumSliderValue(val) {
+      systemState.targetHumidity = parseFloat(val);
+      document.getElementById('hum-slider-val').innerText = `${val}%`;
+    }
+
+    // Machine Registration
+    function openRegisterMachineModal() {
+      document.getElementById('register-machine-modal').classList.remove('hidden');
+    }
+
+    function closeRegisterMachineModal() {
+      document.getElementById('register-machine-modal').classList.add('hidden');
+    }
+
+    function saveNewMachine() {
+      const name = document.getElementById('reg-mch-name').value || 'SHG Solar Dryer';
+      const serial = document.getElementById('reg-mch-serial').value || 'AGAR-2026-NEW';
+      const loc = document.getElementById('reg-mch-loc').value || 'SHG Center';
+
+      const container = document.getElementById('machines-container');
+      const cardHtml = `
+    <div class="card machine-card">
+      <div class="machine-head">
+        <div class="machine-icon"><i class="fa-solid fa-solar-panel"></i></div>
+        <div>
+          <h4>${name} (${loc})</h4>
+          <small>Serial: ${serial}</small>
+        </div>
+        <span class="tag-status green">ACTIVE</span>
+      </div>
+      <div class="machine-metrics">
+        <div><span>Chamber Temp</span><strong>35.0°C</strong></div>
+        <div><span>Moisture</span><strong>30.0%</strong></div>
+        <div><span>Power</span><strong>Solar 150W</strong></div>
+      </div>
+      <div class="machine-actions">
+        <button class="btn btn-secondary btn-sm" onclick="switchView('dashboard', document.querySelector('[data-view=dashboard]'))">Monitor Live</button>
+      </div>
+    </div>
+  `;
+      container.insertAdjacentHTML('beforeend', cardHtml);
+      closeRegisterMachineModal();
+      alert(`Registered machine "${name}" successfully!`);
+    }
+
+    // Export CSV Batches Report
+    function exportBatchesCSV() {
+      const csvContent = "data:text/csv;charset=utf-8,"
+        + "Batch ID,Machine,Duration,Packets Produced,Final Moisture,Quality Score,Energy Source,Date\n"
+        + "#BATCH-401,Madurai Hub #1,42 min,450,18.5%,9.5/10,Solar (82%),2026-09-04\n"
+        + "#BATCH-400,Madurai Hub #1,45 min,420,19.0%,9.2/10,Solar (78%),2026-09-03\n"
+        + "#BATCH-399,Dindigul Unit #2,50 min,380,20.0%,8.8/10,Solar (70%),2026-09-03\n";
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "agarbatti_batches_report.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // Emergency Modal
+    function openEmergencyModal() {
+      document.getElementById('emergency-modal').classList.remove('hidden');
+    }
+
+    function closeEmergencyModal() {
+      document.getElementById('emergency-modal').classList.add('hidden');
+    }
+
+    function confirmEmergencyShutdown() {
+      closeEmergencyModal();
+      stopCycle();
+      const alertBanner = document.getElementById('critical-alert-banner');
+      if (alertBanner) alertBanner.classList.remove('hidden');
+    }
+
+    function triggerHighTempAlert() {
+      const alertBanner = document.getElementById('critical-alert-banner');
+      if (alertBanner) alertBanner.classList.remove('hidden');
+    }
+
+    function acknowledgeAlert() {
+      const alertBanner = document.getElementById('critical-alert-banner');
+      if (alertBanner) alertBanner.classList.add('hidden');
+    }
+
+    function triggerManualSync() {
+      alert('Offline SQLite database synced successfully to Node.js backend!');
+      document.getElementById('offline-badge').classList.add('hidden');
+    }
+
+    function handleHashRoute() {
+      const hash = window.location.hash.replace('#', '') || 'dashboard';
+      const validViews = ['dashboard', 'machines', 'batches', 'analytics', 'alerts', 'settings'];
+      const viewId = validViews.includes(hash) ? hash : 'dashboard';
+      const navElem = document.querySelector(`.sidebar-menu [data-view="${viewId}"]`);
+      switchView(viewId, navElem);
+    }
+
+    window.addEventListener('hashchange', handleHashRoute);
+
+    window.addEventListener('DOMContentLoaded', () => {
+      initCharts();
+      updateGauges();
+      runRealtimeSimulationLoop();
+      handleHashRoute();
+
+      // Close modals on backdrop click
+      document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
+        backdrop.addEventListener('click', (e) => {
+          if (e.target === backdrop) {
+            backdrop.classList.add('hidden');
+          }
+        });
+      });
+    });
+
+
+  </script>
 </body>
+
 </html>
