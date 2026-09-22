@@ -1,21 +1,5 @@
 {
-  "version": 2,
-  "name": "agar-smart",
-  "cleanUrls": true,
-  "routes": [
-    {
-      "src": "/index.css",
-      "dest": "/index.css"
-    },
-    {
-      "src": "/app.js",
-      "dest": "/app.js"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/$1"
-    }
-  ]
+  "cleanUrls": true
 }
 
 
