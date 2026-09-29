@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  database:
+    image: postgis/postgis:15-3.3
+    container_name: stormcast_postgis
+    environment:
+      POSTGRES_DB: stormcast_db
+      POSTGRES_USER: stormadmin
+      POSTGRES_PASSWORD: stormpassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U stormadmin -d stormcast_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: ../docker/Dockerfile.backend
+    container_name: stormcast_backend
+    environment:
+      - DATA_MODE=demo
+      - DATABASE_URL=postgresql+asyncpg://stormadmin:stormpassword@database:5432/stormcast_db
+      - SECRET_KEY=stormcast-secret-key-sih-2026-moes-imd-secure
+    ports:
+      - "8000:8000"
+    depends_on:
+      database:
+        condition: service_healthy
+    restart: always
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: ../docker/Dockerfile.frontend
+    container_name: stormcast_frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    restart: always
+
+volumes:
+  pgdata:
